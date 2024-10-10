@@ -18,15 +18,20 @@ const Login = () => {
     e.preventDefault();
     try {
       const response = await axios.post('http://127.0.0.1:8000/api/login/', formData);
-      const { access, refresh } = response.data; // Assuming the response contains access and refresh tokens
-
-      // Store tokens and username in localStorage
+      const { access, refresh, is_admin } = response.data; 
+  
       localStorage.setItem('accessToken', access);
       localStorage.setItem('refreshToken', refresh);
-      localStorage.setItem('username', formData.username); // Store the username from formData
-
+      localStorage.setItem('username', formData.username); 
+      
+      if (is_admin) {
+        localStorage.setItem('isAdmin', 'true');
+      } else {
+        localStorage.setItem('isAdmin', 'false');
+      }
+  
       console.log('Login successful:', response.data);
-      navigate('/'); // Redirect to home or another page after login
+      navigate('/'); 
     } catch (error) {
       console.error('Login error:', error);
     }

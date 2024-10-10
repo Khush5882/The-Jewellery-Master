@@ -74,23 +74,31 @@ const Header = () => {
             </div>
 
             <div className="relative">
-              <button onClick={toggleProfileDropdown} className="flex items-center">
-                <UserIcon className="h-6 w-6 text-gray-900" />
-                {currentUser && <span className="ml-2 text-gray-900">{currentUser}</span>}
-              </button>
-              {profileOpen && (
-                <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-                  <div className="py-1">
-                    <button
-                      onClick={handleLogout}
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-                    >
-                      Logout
-                    </button>
-                  </div>
-                </div>
-              )}
-            </div>
+  <button onClick={toggleProfileDropdown} className="flex items-center">
+    <UserIcon className="h-6 w-6 text-gray-900" />
+    {currentUser && <span className="ml-2 text-gray-900">{currentUser}</span>}
+  </button>
+  {profileOpen && (
+    <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+      <div className="py-1">
+      <button
+          onClick={() => navigate('/profile')} // Update this line to use a function
+          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+        >
+          Profile
+        </button>
+        <button
+          onClick={handleLogout}
+          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+        >
+          Logout
+        </button>
+        
+      </div>
+    </div>
+  )}
+</div>
+
           </div>
 
           {/* Mobile Menu Button */}
