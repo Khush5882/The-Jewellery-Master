@@ -5,7 +5,7 @@ export default function Footer() {
     <footer className="w-full bg-white text-black  p-8">
     <div className="flex flex-row flex-wrap items-center justify-center gap-y-6 gap-x-12 bg-white text-black text-center md:justify-between">
     <a href="/" className="text-2xl font-bold text-black flex items-center">
-              <span className="sr-only">Your Logo</span>
+              <span className="sr-only"></span>
               <img
                 className="h-10 w-auto mr-2 scale-150 filter grayscale transition duration-500 hover:filter-none"
                 src='/image-removebg-preview (2).png'
