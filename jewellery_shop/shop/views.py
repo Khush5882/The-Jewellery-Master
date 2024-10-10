@@ -13,6 +13,10 @@ from .serializers import UserRegistrationSerializer
 from rest_framework import generics, permissions
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
+from .serializers import SuperUserRegistrationSerializer
+from rest_framework.permissions import AllowAny
+from .models import UserInfo
+from .serializers import UserInfoSerializer
 
 
 
@@ -99,12 +103,62 @@ class UserLoginView(APIView):
     def post(self, request):
         username = request.data.get('username')
         password = request.data.get('password')
+        
+        if not username or not password:
+            return Response(
+                {'error': 'Username and password are required.'}, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
         user = authenticate(username=username, password=password)
 
         if user:
             refresh = RefreshToken.for_user(user)
+            is_admin = user.is_superuser
             return Response({
                 'refresh': str(refresh),
                 'access': str(refresh.access_token),
+                'is_admin': is_admin,
             })
-        return Response({'error': 'Invalid credentials'}, status=400)
+        
+        return Response(
+            {'error': 'Invalid username or password.'}, 
+            status=status.HTTP_400_BAD_REQUEST
+        )
+
+
+class UserProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+
+        # Check if UserInfo exists
+        try:
+            user_info = user.userinfo
+        except UserInfo.DoesNotExist:
+            return Response({'detail': 'UserInfo does not exist for this user.'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = UserInfoSerializer(user_info)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request):
+        user = request.user
+
+        # Check if UserInfo exists
+        try:
+            user_info = user.userinfo
+        except UserInfo.DoesNotExist:
+            user_info = UserInfo(user=user)  # Create new UserInfo if it doesn't exist
+
+        serializer = UserInfoSerializer(user_info, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    
+class SuperUserRegistrationView(generics.CreateAPIView):
+    queryset = User.objects.all()
+    serializer_class = SuperUserRegistrationSerializer
+    permission_classes = [AllowAny]

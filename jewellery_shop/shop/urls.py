@@ -2,6 +2,9 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from rest_framework.authtoken.views import obtain_auth_token
 from .views import ProductViewSet, OrderViewSet ,CartViewSet, LogoutView, UserRegistrationView, UserLoginView
+from .views import UserProfileView
+from .views import SuperUserRegistrationView
+
 
 router = DefaultRouter()
 router.register(r'products', ProductViewSet)
@@ -18,5 +21,8 @@ urlpatterns = [
     path('api/logout/', LogoutView.as_view(), name='logout'),  
     path('api/register/', UserRegistrationView.as_view(), name='register'),
     path('api/login/', UserLoginView.as_view(), name='login'),
+    path('api/profile/', UserProfileView.as_view(), name='user-profile'),
+    path('api/register-superuser/', SuperUserRegistrationView.as_view(), name='register-superuser'),
+
 
 ]
