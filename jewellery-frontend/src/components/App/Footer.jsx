@@ -43,7 +43,7 @@ export default function Footer() {
       </ul>
     </div>
     <p className="block mb-4 text-sm text-center text-black md:mb-0 border-t border-slate-200 mt-4 pt-4">
-      The Jewellery Master pvt.ltd.
+      The Jewellery Master pvt.ltd
       </p>
     </footer>
   )
