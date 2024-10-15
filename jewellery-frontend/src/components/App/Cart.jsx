@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 export default function Cart({ open, setOpen , refreshCart}) {
   const [cartItems, setCartItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const token = localStorage.getItem('accessToken');
+  const navigate = useNavigate();
 
   // Fetch cart items on component load
   useEffect(() => {
@@ -209,7 +211,7 @@ export default function Cart({ open, setOpen , refreshCart}) {
                   <p className="mt-0.5 text-sm text-gray-500">Shipping and taxes calculated at checkout.</p>
                   <div className="mt-6">
                     <a
-                      href="#"
+                      onClick={() => navigate('/checkout')}
                       className="flex items-center justify-center rounded-md border border-transparent bg-indigo-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700"
                     >
                       Checkout
