@@ -1,8 +1,8 @@
 from .models import Product, Order, OrderItem
-from .serializers import ProductSerializer, OrderSerializer, OrderItemSerializer
+from .serializers import ProductSerializer, OrderSerializer, OrderItemSerializer, AddressSerializer
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from .models import Cart, CartItem, User
+from .models import Cart, CartItem, User, Address
 from .serializers import CartSerializer, CartItemSerializer
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
@@ -26,15 +26,99 @@ class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
 
-class OrderViewSet(viewsets.ModelViewSet):
-    queryset = Order.objects.all()
-    serializer_class = OrderSerializer
 
 
-class OrderItemViewSet(viewsets.ModelViewSet):
-    queryset = OrderItem.objects.all()
-    serializer_class = OrderItemSerializer
+# Order List/Create View
+class OrderViewSet(viewsets.ViewSet):
+    permission_classes = [IsAuthenticated]  
 
+    def create(self, request):
+        # Extract order data from the request
+        order_items_data = request.data.get('order_items', [])
+        
+        # Calculate total price based on the order items
+        total_price = 0
+        for item_data in order_items_data:
+            product_id = item_data.get('product')
+            quantity = item_data.get('quantity', 1)
+
+            # Fetch the product
+            product = get_object_or_404(Product, id=product_id)
+
+            # Calculate total price
+            total_price += product.price * quantity  # Assuming Product has a price field
+
+        # Prepare the order data
+        order_data = {
+            'user': request.user,
+            'total_price': total_price,
+            'name': request.data.get('name'),
+            'phone_number': request.data.get('phone_number'),
+            'billing_address': request.data.get('billing_address'),
+            'shipping_address': request.data.get('shipping_address'),
+            'coupon_applied': request.data.get('coupon_applied'),
+            'payment_method': request.data.get('payment_method', 'CARD'),
+        }
+
+        # Create the order
+        order = Order.objects.create(**order_data)  # Create order with the data provided
+
+        # Create order items
+        for item_data in order_items_data:
+            product = get_object_or_404(Product, id=item_data['product'])
+            OrderItem.objects.create(order=order, product=product, quantity=item_data['quantity'])
+
+        # Serialize the order data
+        serializer = OrderSerializer(order)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def list(self, request):
+        # List all orders for the authenticated user
+        orders = Order.objects.filter(user=request.user)
+        serializer = OrderSerializer(orders, many=True)
+        return Response(serializer.data)
+
+    def retrieve(self, request, pk=None):
+        # Retrieve a specific order by ID
+        order = get_object_or_404(Order, pk=pk, user=request.user)
+        serializer = OrderSerializer(order)
+        return Response(serializer.data)
+
+    def update(self, request, pk=None):
+        # Update a specific order by ID
+        order = get_object_or_404(Order, pk=pk, user=request.user)
+        serializer = OrderSerializer(order, data=request.data, partial=True)  # Allow partial updates
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def destroy(self, request, pk=None):
+        # Delete a specific order by ID
+        order = get_object_or_404(Order, pk=pk, user=request.user)
+        order.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+# If you want to create a separate view for addresses
+class AddressListCreateView(generics.ListCreateAPIView):
+    """
+    View to list all addresses or create a new address.
+    """
+    serializer_class = AddressSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        # Only return addresses belonging to the authenticated user
+        return Address.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        # Associate the address with the authenticated user
+        serializer.save(user=self.request.user)
+
+class AddressDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Address.objects.all()
+    serializer_class = AddressSerializer
+    permission_classes = [IsAuthenticated]
 
 
 

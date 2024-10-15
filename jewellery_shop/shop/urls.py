@@ -1,18 +1,17 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from rest_framework.authtoken.views import obtain_auth_token
-from .views import ProductViewSet, OrderViewSet ,CartViewSet, LogoutView, UserRegistrationView, UserLoginView
+from .views import ProductViewSet,CartViewSet, LogoutView, UserRegistrationView, UserLoginView, OrderViewSet, AddressListCreateView, AddressDetailView
 from .views import UserProfileView
 from .views import SuperUserRegistrationView
 
 
 router = DefaultRouter()
 router.register(r'products', ProductViewSet)
-router.register(r'orders', OrderViewSet)
 router.register(r'cart', CartViewSet, basename='cart')
-
 cart_list = CartViewSet.as_view({'get': 'list', 'post': 'create'})
 cart_detail = CartViewSet.as_view({'put': 'update', 'delete': 'destroy'})
+router.register(r'orders', OrderViewSet, basename='order')
 
 urlpatterns = [
     path('api/', include(router.urls)),  
@@ -23,6 +22,7 @@ urlpatterns = [
     path('api/login/', UserLoginView.as_view(), name='login'),
     path('api/profile/', UserProfileView.as_view(), name='user-profile'),
     path('api/register-superuser/', SuperUserRegistrationView.as_view(), name='register-superuser'),
-
+    path('addresses/', AddressListCreateView.as_view(), name='address-list-create'),
+    path('addresses/<int:pk>/', AddressDetailView.as_view(), name='address-detail'),
 
 ]
