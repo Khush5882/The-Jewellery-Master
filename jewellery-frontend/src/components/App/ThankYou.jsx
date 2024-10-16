@@ -48,6 +48,18 @@ const ThankYou = () => {
     fetchProducts();
   }, [orderSummary, token]); // Fetch products when orderSummary changes
 
+  // Calculate the total price, applying discount if applicable
+  const getTotalPrice = () => {
+    if (!orderSummary) return 0;
+    const total = orderSummary.total_price; // Get the total price
+    const discountCoupon = orderSummary.coupon_applied;
+
+    if (discountCoupon === 'DISCOUNT10') {
+      return (total * 0.9).toFixed(2); // Apply a 10% discount
+    }
+    return total.toFixed(2); // Return the total without discount
+  };
+
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
       <h1 className="text-2xl font-bold">Thank You for Your Order!</h1>
@@ -59,7 +71,7 @@ const ThankYou = () => {
         <div className="mt-6 bg-gray-100 p-4 rounded-md">
           <h2 className="text-lg font-medium">Order Summary</h2>
           <p><strong>Order ID:</strong> {orderSummary.id}</p>
-          <p><strong>Total Price:</strong> ${orderSummary.total_price}</p>
+          <p><strong>Total Price:</strong> ${getTotalPrice()}</p> {/* Display total price with discount */}
           <p><strong>Coupon Code:</strong> {orderSummary.coupon_applied}</p> 
           <p><strong>Name:</strong> {orderSummary.name}</p>
           <p><strong>Phone Number:</strong> {orderSummary.phone_number}</p>

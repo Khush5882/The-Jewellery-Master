@@ -11,6 +11,8 @@ import Header from './components/App/Header'; // Import your Header component
 import AboutJewelryMaster from './components/App/About';
 import AdminRegister from './components/Auth/AdminReg';
 import UserProfile from './components/App/Profile';
+import CheckoutForm from './components/App/CheckoutForm';
+import ThankYou from './components/App/ThankYou';
 
 function App() {
   const location = useLocation(); // Get the current location
@@ -30,6 +32,9 @@ function App() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/about" element={<AboutJewelryMaster />} />
           <Route path="/profile" element={<UserProfile />} />
+          <Route path="/checkout" element={<CheckoutForm />} />
+          <Route path="/thank-you" element={<ThankYou/>} />
+
 
         </Routes>
       </div>
