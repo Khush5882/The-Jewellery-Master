@@ -18,7 +18,8 @@ from rest_framework.permissions import AllowAny
 from .models import UserInfo
 from .serializers import UserInfoSerializer
 
-
+from .models import JewelryCustomization
+from .serializers import JewelryCustomizationSerializer
 
 
 
@@ -246,3 +247,12 @@ class SuperUserRegistrationView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = SuperUserRegistrationSerializer
     permission_classes = [AllowAny]
+    
+
+class JewelryCustomizationViewSet(viewsets.ModelViewSet):
+    queryset = JewelryCustomization.objects.all()
+    serializer_class = JewelryCustomizationSerializer
+    permission_classes = [IsAuthenticated]  # Ensure user is authenticated
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)

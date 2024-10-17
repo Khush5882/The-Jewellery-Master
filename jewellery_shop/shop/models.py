@@ -79,3 +79,34 @@ class UserInfo(models.Model):
 
     def __str__(self):
         return f"{self.user.username}'s Info"
+
+
+from django.db import models
+from django.contrib.auth.models import User
+
+class JewelryCustomization(models.Model):
+    JEWELRY_TYPES = [
+        ('ring', 'Ring'),
+        ('necklace', 'Necklace'),
+        ('bracelet', 'Bracelet'),
+        ('earrings', 'Earrings'),
+    ]
+
+    MATERIALS = [
+        ('gold', 'Gold'),
+        ('silver', 'Silver'),
+        ('platinum', 'Platinum'),
+        ('diamond', 'Diamond'),
+        ('gemstone', 'Gemstone'),
+    ]
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE)  # Foreign key to User model
+    jewelry_type = models.CharField(max_length=50, choices=JEWELRY_TYPES)
+    material = models.CharField(max_length=50, choices=MATERIALS)
+    size = models.CharField(max_length=10, blank=True, null=True)  # Optional size for rings/bracelets
+    engraving_text = models.CharField(max_length=100, blank=True, null=True)  # Optional engraving
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.jewelry_type} ({self.material}) for {self.user.username}"

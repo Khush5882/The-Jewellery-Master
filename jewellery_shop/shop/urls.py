@@ -4,6 +4,8 @@ from rest_framework.authtoken.views import obtain_auth_token
 from .views import ProductViewSet,CartViewSet, LogoutView, UserRegistrationView, UserLoginView, OrderViewSet, AddressListCreateView, AddressDetailView
 from .views import UserProfileView
 from .views import SuperUserRegistrationView
+from .views import JewelryCustomizationViewSet
+
 
 
 router = DefaultRouter()
@@ -12,6 +14,8 @@ router.register(r'cart', CartViewSet, basename='cart')
 cart_list = CartViewSet.as_view({'get': 'list', 'post': 'create'})
 cart_detail = CartViewSet.as_view({'put': 'update', 'delete': 'destroy'})
 router.register(r'orders', OrderViewSet, basename='order')
+router.register(r'jewelry_customization', JewelryCustomizationViewSet)
+
 
 urlpatterns = [
     path('api/', include(router.urls)),  

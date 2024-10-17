@@ -4,7 +4,7 @@ from .models import Cart, CartItem, Address
 from django.contrib.auth.models import User
 from .models import UserInfo
 from django.conf import settings 
-
+from .models import JewelryCustomization
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -123,3 +123,11 @@ class SuperUserRegistrationSerializer(serializers.ModelSerializer):
         # Create the associated UserInfo object and set is_admin to True
         UserInfo.objects.create(user=superuser, is_admin=True)
         return superuser
+
+
+
+
+class JewelryCustomizationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = JewelryCustomization
+        fields = '__all__'
