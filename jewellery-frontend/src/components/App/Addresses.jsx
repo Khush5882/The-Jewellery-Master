@@ -1,4 +1,7 @@
 // src/components/AddAddressForm.js
+//vedio: Build an ecommerce website with Django and React // Part 9 - Updating and deleting addresses (
+// CHAT GPT was use dto imporve the code for better eroor handling and data submission.
+// ChatGPT assisted in refining the structure and logic of the address addition process.
 import React, { useState } from 'react';
 import axios from 'axios';
 
