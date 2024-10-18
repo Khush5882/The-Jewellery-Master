@@ -1,3 +1,4 @@
+# what are the imporatant fields that can be added in the customization page and what are different ways that it can be done give explaination for it as well)
 # used chatGpt for the the help in the code (how can i create a jewellery customsiazation code for a website using python django and react)
 from django.conf import settings
 from django.db import migrations, models
