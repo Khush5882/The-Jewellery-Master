@@ -9,13 +9,13 @@ const JewelryCustomizationForm = () => {
     engraving_text: '',
     price: 0,
   });
-  
+
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [jewelryTypes, setJewelryTypes] = useState([]);
   const [materials, setMaterials] = useState([]);
 
-  const token = localStorage.getItem('accessToken');  // Get JWT token or any auth method you use
+  const token = localStorage.getItem('accessToken'); // Get JWT token or any auth method you use
 
   // Base prices for jewelry types and materials (you can fetch these from the backend too)
   const basePrices = {
@@ -31,6 +31,30 @@ const JewelryCustomizationForm = () => {
     },
   };
 
+  // Hardcoded images for each jewelry type and material
+  const jewelryImages = {
+    ring: {
+      gold: '/images/ring_gold.jpg',
+      silver: '/images/ring_silver.jpg',
+      platinum: '/images/ring_platinum.jpg',
+    },
+    necklace: {
+      gold: '/images/necklace_gold.jpg',
+      silver: '/images/necklace_silver.jpg',
+      platinum: '/images/necklace_platinum.jpg',
+    },
+    bracelet: {
+      gold: '/images/bracelet_gold.jpg',
+      silver: '/images/bracelet_silver.jpg',
+      platinum: '/images/bracelet_platinum.jpg',
+    },
+    earrings: {
+      gold: '/images/earring_gold.jpg',
+      silver: '/images/earring_silver.jpg',
+      platinum: '/images/earring_platinum.jpg',
+    },
+  };
+
   // Fetch jewelry types and materials from the backend
   useEffect(() => {
     const fetchData = async () => {
@@ -38,7 +62,7 @@ const JewelryCustomizationForm = () => {
         const response = await axios.get('http://127.0.0.1:8000/jewelry_options/', {
           headers: {
             Authorization: `Bearer ${token}`,
-          }
+          },
         });
         setJewelryTypes(response.data.jewelry_types);
         setMaterials(response.data.materials);
@@ -50,21 +74,25 @@ const JewelryCustomizationForm = () => {
   }, [token]);
 
   // Function to calculate price based on selected options
-  const calculatePrice = (type, material) => {
+  const calculatePrice = (type, material, engraving) => {
     const typePrice = basePrices.jewelry_type[type] || 0;
     const materialPrice = basePrices.material[material] || 0;
+    const engravingPrice = engraving ? 100 : 0; // Add $100 if engraving text is not empty
 
-    // Add extra logic if needed (e.g., engraving or size could affect price)
-    return typePrice + materialPrice;
+    return typePrice + materialPrice + engravingPrice; // Return the total price
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     const newFormData = { ...formData, [name]: value };
 
-    // Recalculate the price if either jewelry type or material changes
-    if (name === 'jewelry_type' || name === 'material') {
-      const updatedPrice = calculatePrice(newFormData.jewelry_type, newFormData.material);
+    // Recalculate the price if either jewelry type, material, or engraving changes
+    if (name === 'jewelry_type' || name === 'material' || name === 'engraving_text') {
+      const updatedPrice = calculatePrice(
+        newFormData.jewelry_type,
+        newFormData.material,
+        newFormData.engraving_text
+      );
       newFormData.price = updatedPrice;
     }
 
@@ -73,7 +101,7 @@ const JewelryCustomizationForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     try {
       const response = await axios.post('http://127.0.0.1:8000/api/jewelry_customization/', formData, {
         headers: {
@@ -81,14 +109,14 @@ const JewelryCustomizationForm = () => {
           'Content-Type': 'application/json',
         },
       });
-  
+
       if (response.status === 201) {
         setSuccess('Customization successfully submitted!');
         setError(null);
       }
     } catch (error) {
       console.error('Error:', error);
-      console.error('Error Details:', error.response?.data);  // Log detailed error
+      console.error('Error Details:', error.response?.data); // Log detailed error
       setError(error.response?.data?.detail || 'There was an error submitting your customization.');
     }
   };
@@ -96,7 +124,7 @@ const JewelryCustomizationForm = () => {
   return (
     <div className="max-w-lg mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Customize Your Jewelry</h1>
-      
+
       {error && <p className="text-red-500">{error}</p>}
       {success && <p className="text-green-500">{success}</p>}
 
@@ -154,6 +182,18 @@ const JewelryCustomizationForm = () => {
           className="border p-2 mb-4 w-full"
           disabled
         />
+
+        {/* Display images based on the selected type and material */}
+        {formData.jewelry_type && formData.material && (
+          <div className="mt-4">
+            <h2 className="text-lg font-semibold">Selected Product:</h2>
+            <img
+              src={jewelryImages[formData.jewelry_type][formData.material]}
+              alt={`${formData.jewelry_type} made of ${formData.material}`}
+              className="w-full h-auto mt-2 border rounded"
+            />
+          </div>
+        )}
 
         <button type="submit" className="bg-blue-500 text-white p-2 rounded w-full">
           Submit Customization
