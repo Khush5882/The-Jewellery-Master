@@ -23,6 +23,7 @@ const JewelryCustomizationForm = () => {
       ring: 100,
       necklace: 200,
       bracelet: 150,
+      earrings: 120,
     },
     material: {
       gold: 300,
@@ -54,6 +55,15 @@ const JewelryCustomizationForm = () => {
       platinum: '/images/earring_silver.jpg',
     },
   };
+
+  // Hardcoded reviews
+  const reviews = [
+    { name: 'Alice', rating: 5, comment: 'Absolutely love my new necklace!' },
+    { name: 'Bob', rating: 4, comment: 'Great quality and fast shipping.' },
+    { name: 'Charlie', rating: 5, comment: 'Beautiful ring! Highly recommend.' },
+    { name: 'Diana', rating: 3, comment: 'It was okay, but not what I expected.' },
+    { name: 'Eve', rating: 5, comment: 'Perfect customization, I am very happy!' },
+  ];
 
   // Fetch jewelry types and materials from the backend
   useEffect(() => {
@@ -111,7 +121,7 @@ const JewelryCustomizationForm = () => {
       });
 
       if (response.status === 201) {
-        setSuccess('Customization successfully submitted!');
+        setSuccess('Customization successfully submitted! Our agent will get back to you through your phone number and email.');
         setError(null);
       }
     } catch (error) {
@@ -184,8 +194,6 @@ const JewelryCustomizationForm = () => {
             disabled
           />
 
-       
-
           <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded w-full mt-4 transition duration-200">
             Submit Customization
           </button>
@@ -202,6 +210,55 @@ const JewelryCustomizationForm = () => {
           </div>
         )}
       </div>
+
+      {/* Review Section */}
+      <div className="mt-10">
+        <h2 className="text-2xl font-semibold mb-4">Customer Reviews</h2>
+        <div className="flex flex-wrap justify-center">
+          {reviews.map((review, index) => (
+            <div key={index} className="bg-white p-4 m-2 rounded-lg shadow-md transform hover:scale-105 transition-transform duration-300 ease-in-out">
+              <div className="flex items-center mb-2">
+                {[...Array(review.rating)].map((_, starIndex) => (
+                  <span key={starIndex} className="text-yellow-500">★</span>
+                ))}
+                {[...Array(5 - review.rating)].map((_, starIndex) => (
+                  <span key={starIndex} className="text-gray-300">★</span>
+                ))}
+              </div>
+              <p className="text-gray-800 font-semibold">{review.name}</p>
+              <p className="text-gray-600">{review.comment}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <style jsx>{`
+        /* Marquee effect for reviews */
+        .marquee {
+          overflow: hidden;
+          white-space: nowrap;
+          animation: marquee 20s linear infinite;
+        }
+        @keyframes marquee {
+          0% { transform: translateX(100%); }
+          100% { transform: translateX(-100%); }
+        }
+      `}</style>
+
+
+
+<div className="mt-10 p-6 bg-gray-100 rounded-lg shadow-md text-center">
+  <h1 className="text-xl font-semibold text-gray-800 mb-2">
+    For more information, please contact:
+  </h1>
+  <p className="text-lg text-blue-600 font-medium">
+    +1 9876543210
+  </p>
+  <p className="text-lg text-blue-600 font-medium">
+    or email: <a href="mailto:thejm@gmail.com" className="underline">thejm@gmail.com</a>
+  </p>
+</div>
+
     </div>
   );
 };

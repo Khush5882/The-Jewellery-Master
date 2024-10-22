@@ -17,24 +17,28 @@ const Header = () => {
   }, []);
 
   const toggleCart = () => {
-    setCartOpen(!cartOpen); 
+    setCartOpen(!cartOpen);
   };
 
   const toggleProfileDropdown = () => {
-    setProfileOpen(!profileOpen); 
+    setProfileOpen(!profileOpen);
   };
 
   const handleLogout = () => {
     localStorage.removeItem('username');
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
-    navigate('/login')
-    setCurrentUser(null); 
+    navigate('/login');
+    setCurrentUser(null);
     console.log('Logged out');
   };
 
+  const handleLogin = () => {
+    navigate('/login');
+  };
+
   return (
-    <header className="bg-white shadow-sm sticky top-0 z-10"  >
+    <header className="bg-white shadow-sm sticky top-0 z-10">
       <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" aria-label="Top">
         <div className="flex h-16 justify-between items-center">
           <div className="flex items-center">
@@ -45,7 +49,7 @@ const Header = () => {
                 src='/image-removebg-preview (2).png'
                 alt="Logo"
               />
-              <h3 className="text-2xl font-mono">The Jewel Masters</h3> 
+              <h3 className="text-2xl font-mono">The Jewel Masters</h3>
             </a>
           </div>
 
@@ -54,9 +58,10 @@ const Header = () => {
             <a href="/" className="text-gray-900 hover:text-gray-600">Home</a>
             <a href="/shop" className="text-gray-900 hover:text-gray-600">Shop</a>
             <a href="/about" className="text-gray-900 hover:text-gray-600">About</a>
+            <a href="/jewellery-customization" className="text-gray-900 hover:text-gray-600">Customize</a>
           </div>
 
-          {/* Search, Cart, and Profile */}
+          {/* Search, Cart, and Profile/Login Button */}
           <div className="flex items-center space-x-4">
             <div className="relative">
               <input
@@ -74,31 +79,40 @@ const Header = () => {
             </div>
 
             <div className="relative">
-  <button onClick={toggleProfileDropdown} className="flex items-center">
-    <UserIcon className="h-6 w-6 text-gray-900" />
-    {currentUser && <span className="ml-2 text-gray-900">{currentUser}</span>}
-  </button>
-  {profileOpen && (
-    <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-      <div className="py-1">
-      <button
-          onClick={() => navigate('/profile')} // Update this line to use a function
-          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-        >
-          Profile
-        </button>
-        <button
-          onClick={handleLogout}
-          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
-        >
-          Logout
-        </button>
-        
-      </div>
-    </div>
-  )}
-</div>
-
+              {currentUser ? (
+                <>
+                  <button onClick={toggleProfileDropdown} className="flex items-center">
+                    <UserIcon className="h-6 w-6 text-gray-900" />
+                    <span className="ml-2 text-gray-900">{currentUser}</span>
+                  </button>
+                  {profileOpen && (
+                    <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                      <div className="py-1">
+                        <button
+                          onClick={() => navigate('/profile')}
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                        >
+                          Profile
+                        </button>
+                        <button
+                          onClick={handleLogout}
+                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left"
+                        >
+                          Logout
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <button
+                  onClick={handleLogin}
+                  className="text-gray-900 hover:text-gray-600"
+                >
+                  Login
+                </button>
+              )}
+            </div>
           </div>
 
           {/* Mobile Menu Button */}
