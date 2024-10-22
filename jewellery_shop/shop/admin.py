@@ -50,3 +50,33 @@ admin.site.register(Product, ProductAdmin)
 admin.site.register(Order, OrderAdmin)
 admin.site.register(Cart, CartAdmin)
 admin.site.register(UserInfo, UserInfoAdmin)  # Register UserInfo model
+
+
+
+from django.contrib import admin
+from .models import JewelryCustomization
+
+class JewelryCustomizationAdmin(admin.ModelAdmin):
+    # Display these fields in the list view
+    list_display = ('jewelry_type', 'material', 'price', 'user', 'created_at')
+    
+    # Fields to search by in the admin panel
+    search_fields = ('jewelry_type', 'material', 'user__username', 'engraving_text')
+    
+    # Filters on the right-hand side of the admin list view
+    list_filter = ('jewelry_type', 'material', 'created_at')
+    
+    # Make the 'created_at' field read-only
+    readonly_fields = ('created_at',)
+    
+    # Group fields together in a clear format
+    fieldsets = (
+        ('Jewelry Information', {
+            'fields': ('jewelry_type', 'material', 'size', 'engraving_text', 'price')
+        }),
+        ('User Information', {
+            'fields': ('user', 'created_at')
+        }),
+    )
+
+admin.site.register(JewelryCustomization, JewelryCustomizationAdmin)

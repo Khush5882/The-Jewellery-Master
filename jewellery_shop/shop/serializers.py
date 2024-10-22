@@ -128,7 +128,12 @@ class SuperUserRegistrationSerializer(serializers.ModelSerializer):
 
 
 class JewelryCustomizationSerializer(serializers.ModelSerializer):
+    creator_name = serializers.SerializerMethodField()  # Add this line for creator's name
+
     class Meta:
         model = JewelryCustomization
-        fields = ['jewelry_type', 'material', 'size', 'engraving_text', 'price', 'created_at']  # List fields explicitly, excluding 'user'
+        fields = ['jewelry_type', 'material', 'size', 'engraving_text', 'price', 'created_at', 'creator_name']  # Include creator_name
         read_only_fields = ['created_at']  # Optional, if you want to keep this as read-only
+
+    def get_creator_name(self, obj):
+        return obj.user.username

@@ -17,7 +17,8 @@ from .serializers import SuperUserRegistrationSerializer
 from rest_framework.permissions import AllowAny
 from .models import UserInfo
 from .serializers import UserInfoSerializer
-
+from django.db.models import Sum ,Count
+from django.db.models.functions import TruncDate
 from .models import JewelryCustomization
 from .serializers import JewelryCustomizationSerializer
 
@@ -264,11 +265,30 @@ class JewelryCustomizationViewSet(viewsets.ModelViewSet):
 
 
 
+
 @api_view(['GET'])
 def jewelry_options(request):
     jewelry_types = ['ring', 'necklace', 'bracelet', 'earrings']
-    materials = ['gold', 'silver', 'platinum', 'diamond', 'gemstone']
+    materials = ['gold', 'silver', 'platinum']
     return Response({
         'jewelry_types': jewelry_types,
         'materials': materials
     })
+
+
+@api_view(['GET'])
+def get_insights(request):
+    
+    insights = (
+        Order.objects
+        .annotate(order_date=TruncDate('created_at'))  # Assuming 'created_at' is the timestamp field
+        .values('order_date')
+        .annotate(total_revenue=Sum('total_price'), total_orders=Count('id'))
+        .order_by('order_date')
+    )
+    
+    # Prepare data for response
+    data = {
+        'insights': list(insights)
+    }
+    return Response(data)
