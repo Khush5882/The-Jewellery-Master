@@ -36,22 +36,22 @@ const JewelryCustomizationForm = () => {
     ring: {
       gold: '/images/ring_gold.jpg',
       silver: '/images/ring_silver.jpg',
-      platinum: '/images/ring_platinum.jpg',
+      platinum: '/images/ring_silver.jpg',
     },
     necklace: {
       gold: '/images/necklace_gold.jpg',
       silver: '/images/necklace_silver.jpg',
-      platinum: '/images/necklace_platinum.jpg',
+      platinum: '/images/necklace_silver.jpg',
     },
     bracelet: {
       gold: '/images/bracelet_gold.jpg',
       silver: '/images/bracelet_silver.jpg',
-      platinum: '/images/bracelet_platinum.jpg',
+      platinum: '/images/bracelet_silver.jpg',
     },
     earrings: {
       gold: '/images/earring_gold.jpg',
       silver: '/images/earring_silver.jpg',
-      platinum: '/images/earring_platinum.jpg',
+      platinum: '/images/earring_silver.jpg',
     },
   };
 
@@ -122,83 +122,86 @@ const JewelryCustomizationForm = () => {
   };
 
   return (
-    <div className="max-w-lg mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">Customize Your Jewelry</h1>
+    <div className="max-w-4xl mx-auto p-4">
+      <h1 className="text-3xl font-bold mb-6 text-center">Customize Your Jewelry</h1>
 
-      {error && <p className="text-red-500">{error}</p>}
-      {success && <p className="text-green-500">{success}</p>}
+      {error && <p className="text-red-500 text-center">{error}</p>}
+      {success && <p className="text-green-500 text-center">{success}</p>}
 
-      <form onSubmit={handleSubmit}>
-        <label className="block mb-2">Jewelry Type</label>
-        <select
-          name="jewelry_type"
-          value={formData.jewelry_type}
-          onChange={handleChange}
-          className="border p-2 mb-4 w-full"
-        >
-          <option value="">Select Jewelry Type</option>
-          {jewelryTypes.map((type) => (
-            <option key={type} value={type}>{type}</option>
-          ))}
-        </select>
+      <div className="flex flex-col md:flex-row">
+        <form onSubmit={handleSubmit} className="flex-1 bg-white p-6 rounded-lg shadow-md">
+          <label className="block mb-2 text-lg font-semibold">Jewelry Type</label>
+          <select
+            name="jewelry_type"
+            value={formData.jewelry_type}
+            onChange={handleChange}
+            className="border p-2 mb-4 w-full rounded"
+          >
+            <option value="">Select Jewelry Type</option>
+            {jewelryTypes.map((type) => (
+              <option key={type} value={type}>{type}</option>
+            ))}
+          </select>
 
-        <label className="block mb-2">Material</label>
-        <select
-          name="material"
-          value={formData.material}
-          onChange={handleChange}
-          className="border p-2 mb-4 w-full"
-        >
-          <option value="">Select Material</option>
-          {materials.map((material) => (
-            <option key={material} value={material}>{material}</option>
-          ))}
-        </select>
+          <label className="block mb-2 text-lg font-semibold">Material</label>
+          <select
+            name="material"
+            value={formData.material}
+            onChange={handleChange}
+            className="border p-2 mb-4 w-full rounded"
+          >
+            <option value="">Select Material</option>
+            {materials.map((material) => (
+              <option key={material} value={material}>{material}</option>
+            ))}
+          </select>
 
-        <label className="block mb-2">Size (Optional)</label>
-        <input
-          type="text"
-          name="size"
-          value={formData.size}
-          onChange={handleChange}
-          className="border p-2 mb-4 w-full"
-        />
+          <label className="block mb-2 text-lg font-semibold">Size (Optional)</label>
+          <input
+            type="text"
+            name="size"
+            value={formData.size}
+            onChange={handleChange}
+            className="border p-2 mb-4 w-full rounded"
+          />
 
-        <label className="block mb-2">Engraving (Optional)</label>
-        <input
-          type="text"
-          name="engraving_text"
-          value={formData.engraving_text}
-          onChange={handleChange}
-          className="border p-2 mb-4 w-full"
-        />
+          <label className="block mb-2 text-lg font-semibold">Engraving (Optional)</label>
+          <input
+            type="text"
+            name="engraving_text"
+            value={formData.engraving_text}
+            onChange={handleChange}
+            className="border p-2 mb-4 w-full rounded"
+          />
 
-        <label className="block mb-2">Price</label>
-        <input
-          type="number"
-          name="price"
-          value={formData.price}
-          onChange={handleChange}
-          className="border p-2 mb-4 w-full"
-          disabled
-        />
+          <label className="block mb-2 text-lg font-semibold">Price</label>
+          <input
+            type="number"
+            name="price"
+            value={formData.price}
+            onChange={handleChange}
+            className="border p-2 mb-4 w-full rounded"
+            disabled
+          />
 
-        {/* Display images based on the selected type and material */}
+       
+
+          <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white p-2 rounded w-full mt-4 transition duration-200">
+            Submit Customization
+          </button>
+        </form>
+
+        {/* Image display section */}
         {formData.jewelry_type && formData.material && (
-          <div className="mt-4">
-            <h2 className="text-lg font-semibold">Selected Product:</h2>
+          <div className="flex justify-center items-center mt-4 md:mt-0 md:ml-4">
             <img
               src={jewelryImages[formData.jewelry_type][formData.material]}
-              alt={`${formData.jewelry_type} made of ${formData.material}`}
-              className="w-full h-auto mt-2 border rounded"
+              alt={`Image of a ${formData.jewelry_type} made of ${formData.material}`}
+              className="max-w-xs h-auto rounded shadow-lg"
             />
           </div>
         )}
-
-        <button type="submit" className="bg-blue-500 text-white p-2 rounded w-full">
-          Submit Customization
-        </button>
-      </form>
+      </div>
     </div>
   );
 };
