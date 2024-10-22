@@ -4,7 +4,7 @@ from rest_framework.authtoken.views import obtain_auth_token
 from .views import ProductViewSet,CartViewSet, LogoutView, UserRegistrationView, UserLoginView, OrderViewSet, AddressListCreateView, AddressDetailView
 from .views import UserProfileView
 from .views import SuperUserRegistrationView
-from .views import JewelryCustomizationViewSet
+from .views import JewelryCustomizationViewSet, jewelry_options
 
 
 
@@ -28,5 +28,5 @@ urlpatterns = [
     path('api/register-superuser/', SuperUserRegistrationView.as_view(), name='register-superuser'),
     path('addresses/', AddressListCreateView.as_view(), name='address-list-create'),
     path('addresses/<int:pk>/', AddressDetailView.as_view(), name='address-detail'),
-
+    path('jewelry_options/', jewelry_options),
 ]

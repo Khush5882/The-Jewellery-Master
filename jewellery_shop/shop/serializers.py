@@ -130,4 +130,5 @@ class SuperUserRegistrationSerializer(serializers.ModelSerializer):
 class JewelryCustomizationSerializer(serializers.ModelSerializer):
     class Meta:
         model = JewelryCustomization
-        fields = '__all__'
+        fields = ['jewelry_type', 'material', 'size', 'engraving_text', 'price', 'created_at']  # List fields explicitly, excluding 'user'
+        read_only_fields = ['created_at']  # Optional, if you want to keep this as read-only

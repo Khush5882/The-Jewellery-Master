@@ -21,7 +21,7 @@ from .serializers import UserInfoSerializer
 from .models import JewelryCustomization
 from .serializers import JewelryCustomizationSerializer
 
-
+from rest_framework.decorators import api_view
 
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
@@ -255,4 +255,20 @@ class JewelryCustomizationViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]  # Ensure user is authenticated
 
     def perform_create(self, serializer):
+        # Automatically assign the user from the request
         serializer.save(user=self.request.user)
+
+
+
+
+
+
+
+@api_view(['GET'])
+def jewelry_options(request):
+    jewelry_types = ['ring', 'necklace', 'bracelet', 'earrings']
+    materials = ['gold', 'silver', 'platinum', 'diamond', 'gemstone']
+    return Response({
+        'jewelry_types': jewelry_types,
+        'materials': materials
+    })
