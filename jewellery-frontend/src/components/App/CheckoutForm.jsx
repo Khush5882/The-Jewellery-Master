@@ -23,7 +23,7 @@ const CheckoutForm = () => {
   useEffect(() => {
     const fetchAddresses = async () => {
       try {
-        const response = await axios.get('http://127.0.0.1:8000/addresses/', {
+        const response = await axios.get('http://127.0.0.1:8000/api/addresses/', {
           headers: { Authorization: `Bearer ${token}` },
         });
         setAddresses(response.data);

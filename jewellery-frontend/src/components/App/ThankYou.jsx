@@ -51,7 +51,7 @@ const ThankYou = () => {
   // Calculate the total price, applying discount if applicable
   const getTotalPrice = () => {
     if (!orderSummary) return 0;
-    const total = orderSummary.total_price; // Get the total price
+    const total = Number(orderSummary.total_price); // Ensure total is a number
     const discountCoupon = orderSummary.coupon_applied;
 
     if (discountCoupon === 'DISCOUNT10') {
@@ -71,8 +71,15 @@ const ThankYou = () => {
         <div className="mt-6 bg-gray-100 p-4 rounded-md">
           <h2 className="text-lg font-medium">Order Summary</h2>
           <p><strong>Order ID:</strong> {orderSummary.id}</p>
+          
           <p><strong>Total Price:</strong> ${getTotalPrice()}</p> {/* Display total price with discount */}
-          <p><strong>Coupon Code:</strong> {orderSummary.coupon_applied}</p> 
+
+          {/* Display coupon code or a message if no coupon is applied */}
+          <p>
+            <strong>Coupon Code:</strong> 
+            {orderSummary.coupon_applied ? orderSummary.coupon_applied : "No coupon applied"}
+          </p>
+          
           <p><strong>Name:</strong> {orderSummary.name}</p>
           <p><strong>Phone Number:</strong> {orderSummary.phone_number}</p>
           <p><strong>Shipping Address:</strong> {orderSummary.shipping_address}</p>

@@ -12,7 +12,7 @@ const AddAddressForm = ({ token, setAddresses, setShowAddAddress }) => {
     setError(''); // Reset error state
 
     try {
-      const response = await axios.post('http://127.0.0.1:8000/addresses/', newAddress, {
+      const response = await axios.post('http://127.0.0.1:8000/api/addresses/', newAddress, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

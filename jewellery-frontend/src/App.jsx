@@ -14,6 +14,7 @@ import UserProfile from './components/App/Profile';
 import CheckoutForm from './components/App/CheckoutForm';
 import ThankYou from './components/App/ThankYou';
 import JewelryCustomization from './components/App/JewelleryCustomization';
+import Admin from './components/Admin/Admin';
 
 function App() {
   const location = useLocation(); // Get the current location
@@ -36,6 +37,7 @@ function App() {
           <Route path="/checkout" element={<CheckoutForm />} />
           <Route path="/thank-you" element={<ThankYou/>} />
           <Route path="/jewellery-customization" element={<JewelryCustomization/>} />
+          <Route path="/admin" element={ <Admin/>} />
 
 
 
