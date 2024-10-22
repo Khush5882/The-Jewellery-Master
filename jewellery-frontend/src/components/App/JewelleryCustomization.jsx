@@ -7,7 +7,7 @@ const JewelryCustomizationForm = () => {
     material: '',
     size: '',
     engraving_text: '',
-    price: '',
+    price: 0,
   });
   
   const [error, setError] = useState(null);
@@ -16,6 +16,20 @@ const JewelryCustomizationForm = () => {
   const [materials, setMaterials] = useState([]);
 
   const token = localStorage.getItem('accessToken');  // Get JWT token or any auth method you use
+
+  // Base prices for jewelry types and materials (you can fetch these from the backend too)
+  const basePrices = {
+    jewelry_type: {
+      ring: 100,
+      necklace: 200,
+      bracelet: 150,
+    },
+    material: {
+      gold: 300,
+      silver: 100,
+      platinum: 500,
+    },
+  };
 
   // Fetch jewelry types and materials from the backend
   useEffect(() => {
@@ -35,12 +49,26 @@ const JewelryCustomizationForm = () => {
     fetchData();
   }, [token]);
 
+  // Function to calculate price based on selected options
+  const calculatePrice = (type, material) => {
+    const typePrice = basePrices.jewelry_type[type] || 0;
+    const materialPrice = basePrices.material[material] || 0;
+
+    // Add extra logic if needed (e.g., engraving or size could affect price)
+    return typePrice + materialPrice;
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
+    const newFormData = { ...formData, [name]: value };
+
+    // Recalculate the price if either jewelry type or material changes
+    if (name === 'jewelry_type' || name === 'material') {
+      const updatedPrice = calculatePrice(newFormData.jewelry_type, newFormData.material);
+      newFormData.price = updatedPrice;
+    }
+
+    setFormData(newFormData);
   };
 
   const handleSubmit = async (e) => {
@@ -64,7 +92,6 @@ const JewelryCustomizationForm = () => {
       setError(error.response?.data?.detail || 'There was an error submitting your customization.');
     }
   };
-  
 
   return (
     <div className="max-w-lg mx-auto p-4">
@@ -125,7 +152,7 @@ const JewelryCustomizationForm = () => {
           value={formData.price}
           onChange={handleChange}
           className="border p-2 mb-4 w-full"
-          required
+          disabled
         />
 
         <button type="submit" className="bg-blue-500 text-white p-2 rounded w-full">
