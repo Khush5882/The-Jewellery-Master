@@ -10,10 +10,13 @@ const Header = () => {
   const [cartOpen, setCartOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
+  const [isAdmin, setIsAdmin] = useState(false); // Track if user is an admin
 
   useEffect(() => {
     const username = localStorage.getItem('username');
+    const adminStatus = localStorage.getItem('isAdmin') === 'true'; // Retrieve admin status from localStorage
     setCurrentUser(username);
+    setIsAdmin(adminStatus); // Set admin status
   }, []);
 
   const toggleCart = () => {
@@ -28,8 +31,10 @@ const Header = () => {
     localStorage.removeItem('username');
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
+    localStorage.removeItem('isAdmin'); // Clear admin status on logout
     navigate('/login');
     setCurrentUser(null);
+    setIsAdmin(false);
     console.log('Logged out');
   };
 
@@ -59,6 +64,9 @@ const Header = () => {
             <a href="/shop" className="text-gray-900 hover:text-gray-600">Shop</a>
             <a href="/about" className="text-gray-900 hover:text-gray-600">About</a>
             <a href="/jewellery-customization" className="text-gray-900 hover:text-gray-600">Customize</a>
+            {isAdmin && ( // Conditionally render the Admin link
+              <a href="/admin" className="text-gray-900 hover:text-gray-600">Admin</a>
+            )}
           </div>
 
           {/* Search, Cart, and Profile/Login Button */}
@@ -146,6 +154,9 @@ const Header = () => {
               <a href="/" className="block text-gray-900 hover:text-gray-600">Home</a>
               <a href="/shop" className="block text-gray-900 hover:text-gray-600">Shop</a>
               <a href="/about" className="block text-gray-900 hover:text-gray-600">About</a>
+              {isAdmin && ( // Conditionally render Admin link in mobile menu
+                <a href="/admin" className="block text-gray-900 hover:text-gray-600">Admin</a>
+              )}
             </div>
           </Dialog.Panel>
         </div>

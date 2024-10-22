@@ -15,6 +15,7 @@ import CheckoutForm from './components/App/CheckoutForm';
 import ThankYou from './components/App/ThankYou';
 import JewelryCustomization from './components/App/JewelleryCustomization';
 import Admin from './components/Admin/Admin';
+import ProtectedRoute from './components/ProtectedRoute'; // Import the ProtectedRoute component
 
 function App() {
   const location = useLocation(); // Get the current location
@@ -22,31 +23,26 @@ function App() {
   return (
     <>
       {/* Render Header only if the path is not /login or /register */}
-      {location.pathname !== '/login' && location.pathname !== '/register' && location.pathname !== '/adminreg' && <Header /> }
+      {location.pathname !== '/login' && location.pathname !== '/register' && location.pathname !== '/adminreg' && <Header />}
       
       <div>
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/adminreg" element={<AdminRegister/>}/>
+          <Route path="/adminreg" element={<AdminRegister />} />
           <Route path='/' element={<Home />} />
           <Route path="/shop" element={<Products />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/about" element={<AboutJewelryMaster />} />
           <Route path="/profile" element={<UserProfile />} />
           <Route path="/checkout" element={<CheckoutForm />} />
-          <Route path="/thank-you" element={<ThankYou/>} />
-          <Route path="/jewellery-customization" element={<JewelryCustomization/>} />
-          <Route path="/admin" element={ <Admin/>} />
-
-
-
+          <Route path="/thank-you" element={<ThankYou />} />
+          <Route path="/jewellery-customization" element={<JewelryCustomization />} />
+          <Route path="/admin" element={<ProtectedRoute element={<Admin />} />} /> {/* Use ProtectedRoute here */}
         </Routes>
       </div>
-      {location.pathname !== '/login' && location.pathname !== '/register' && location.pathname !== '/adminreg' && <Footer /> }
-
+      {location.pathname !== '/login' && location.pathname !== '/register' && location.pathname !== '/adminreg' && <Footer />}
     </>
-    
   );
 }
 
