@@ -8,6 +8,8 @@ export default function Products() {
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedPriceRange, setSelectedPriceRange] = useState('');
+  const [sortOption, setSortOption] = useState('');
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
   const [cartOpen, setCartOpen] = useState(false);
@@ -73,16 +75,40 @@ export default function Products() {
     }
   };
 
-  const filteredProducts = selectedCategory
-    ? products.filter(product => product.category === selectedCategory)
-    : products;
+  const applyFilters = () => {
+    let filtered = [...products];
+
+    if (selectedCategory) {
+      filtered = filtered.filter(product => product.category === selectedCategory);
+    }
+
+    if (selectedPriceRange) {
+      const [min, max] = selectedPriceRange.split('-').map(Number);
+      filtered = filtered.filter(product => product.price >= min && product.price <= max);
+    }
+
+    if (sortOption === 'priceLowHigh') {
+      filtered.sort((a, b) => a.price - b.price);
+    } else if (sortOption === 'priceHighLow') {
+      filtered.sort((a, b) => b.price - a.price);
+    } else if (sortOption === 'nameAsc') {
+      filtered.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (sortOption === 'nameDesc') {
+      filtered.sort((a, b) => b.name.localeCompare(a.name));
+    }
+
+    return filtered;
+  };
+
+  const filteredProducts = applyFilters();
 
   return (
     <div className="container mx-auto px-4 py-6">
       <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">Our Products</h1>
 
-      {/* Filter Section */}
-      <div className="flex justify-center mb-8">
+      {/* Filter and Sort Section */}
+      <div className="flex justify-center space-x-4 mb-8">
+        {/* Category Filter */}
         <select
           value={selectedCategory}
           onChange={(e) => setSelectedCategory(e.target.value)}
@@ -94,6 +120,34 @@ export default function Products() {
               {category.name}
             </option>
           ))}
+        </select>
+
+        {/* Price Filter */}
+        <select
+          value={selectedPriceRange}
+          onChange={(e) => setSelectedPriceRange(e.target.value)}
+          className="bg-white border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 p-2 shadow-sm"
+        >
+          <option value="">All Prices</option>
+          <option value="0-20">Under $20</option>
+          <option value="20-50">$20 - $50</option>
+          <option value="50-100">$50 - $100</option>
+          <option value="100-200">$100 - $200</option>
+          <option value="200-500">$200 - $500</option>
+          <option value="500-1000">$500 - $1000</option>
+        </select>
+
+        {/* Sorting Options */}
+        <select
+          value={sortOption}
+          onChange={(e) => setSortOption(e.target.value)}
+          className="bg-white border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 p-2 shadow-sm"
+        >
+          <option value="">Sort By</option>
+          <option value="priceLowHigh">Price: Low to High</option>
+          <option value="priceHighLow">Price: High to Low</option>
+          <option value="nameAsc">Name: A to Z</option>
+          <option value="nameDesc">Name: Z to A</option>
         </select>
       </div>
 
