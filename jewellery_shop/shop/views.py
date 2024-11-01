@@ -1,5 +1,5 @@
-from .models import Product, Order, OrderItem
-from .serializers import ProductSerializer, OrderSerializer, OrderItemSerializer, AddressSerializer
+from .models import Product, Order, OrderItem,ProductCategory
+from .serializers import ProductSerializer, OrderSerializer, OrderItemSerializer, AddressSerializer, ProductCategorySerializer
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from .models import Cart, CartItem, User, Address
@@ -292,3 +292,41 @@ def get_insights(request):
         'insights': list(insights)
     }
     return Response(data)
+
+
+from rest_framework import viewsets
+from .models import Product, ProductCategory
+from .serializers import ProductSerializer, ProductCategorySerializer
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.response import Response
+from rest_framework.decorators import action
+
+class ProductCategoryViewSet(viewsets.ModelViewSet):
+    queryset = ProductCategory.objects.all()
+    serializer_class = ProductCategorySerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data, status=201)
+
+class ProductViewSet(viewsets.ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data, status=201)
+
+    @action(detail=True, methods=['get'])
+    def by_category(self, request, pk=None):
+        """Retrieve products by category"""
+        category = self.get_object()
+        products = Product.objects.filter(category=category)
+        serializer = self.get_serializer(products, many=True)
+        return Response(serializer.data)
