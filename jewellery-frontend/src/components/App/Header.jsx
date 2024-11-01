@@ -11,12 +11,13 @@ const Header = () => {
   const [profileOpen, setProfileOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false); // Track if user is an admin
+  const [shopDropdownOpen, setShopDropdownOpen] = useState(false); // Track shop dropdown visibility
 
   useEffect(() => {
     const username = localStorage.getItem('username');
-    const adminStatus = localStorage.getItem('isAdmin') === 'true'; // Retrieve admin status from localStorage
+    const adminStatus = localStorage.getItem('isAdmin') === 'true';
     setCurrentUser(username);
-    setIsAdmin(adminStatus); // Set admin status
+    setIsAdmin(adminStatus);
   }, []);
 
   const toggleCart = () => {
@@ -31,7 +32,7 @@ const Header = () => {
     localStorage.removeItem('username');
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
-    localStorage.removeItem('isAdmin'); // Clear admin status on logout
+    localStorage.removeItem('isAdmin');
     navigate('/login');
     setCurrentUser(null);
     setIsAdmin(false);
@@ -61,10 +62,29 @@ const Header = () => {
           {/* Desktop Menu */}
           <div className="hidden lg:flex space-x-8">
             <a href="/" className="text-gray-900 hover:text-gray-600">Home</a>
-            <a href="/shop" className="text-gray-900 hover:text-gray-600">Shop</a>
+            <div
+              className="relative"
+              onMouseEnter={() => setShopDropdownOpen(true)}
+              onMouseLeave={() => setShopDropdownOpen(false)}
+            >
+              <a href="/shop" className="text-gray-900 hover:text-gray-600">Shop</a>
+              {shopDropdownOpen && (
+                <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5">
+                  <a href="/shop/necklaces" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                    Necklaces
+                  </a>
+                  <a href="/shop/bracelets" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                    Bracelets
+                  </a>
+                  <a href="/shop/rings" className="block px-4 py-2 text-gray-700 hover:bg-gray-100">
+                    Rings
+                  </a>
+                </div>
+              )}
+            </div>
             <a href="/about" className="text-gray-900 hover:text-gray-600">About</a>
             <a href="/jewellery-customization" className="text-gray-900 hover:text-gray-600">Customize</a>
-            {isAdmin && ( // Conditionally render the Admin link
+            {isAdmin && (
               <a href="/admin" className="text-gray-900 hover:text-gray-600">Admin</a>
             )}
           </div>
@@ -154,7 +174,7 @@ const Header = () => {
               <a href="/" className="block text-gray-900 hover:text-gray-600">Home</a>
               <a href="/shop" className="block text-gray-900 hover:text-gray-600">Shop</a>
               <a href="/about" className="block text-gray-900 hover:text-gray-600">About</a>
-              {isAdmin && ( // Conditionally render Admin link in mobile menu
+              {isAdmin && (
                 <a href="/admin" className="block text-gray-900 hover:text-gray-600">Admin</a>
               )}
             </div>
