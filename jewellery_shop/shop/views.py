@@ -21,7 +21,8 @@ from django.db.models import Sum ,Count
 from django.db.models.functions import TruncDate
 from .models import JewelryCustomization
 from .serializers import JewelryCustomizationSerializer
-
+from django.core.mail import send_mail
+from django.conf import settings
 from rest_framework.decorators import api_view
 
 class ProductViewSet(viewsets.ModelViewSet):
@@ -32,12 +33,12 @@ class ProductViewSet(viewsets.ModelViewSet):
 
 # Order List/Create View
 class OrderViewSet(viewsets.ViewSet):
-    permission_classes = [IsAuthenticated]  
+    permission_classes = [IsAuthenticated]
 
     def create(self, request):
         # Extract order data from the request
         order_items_data = request.data.get('order_items', [])
-        
+
         # Calculate total price based on the order items
         total_price = 0
         for item_data in order_items_data:
@@ -61,18 +62,56 @@ class OrderViewSet(viewsets.ViewSet):
             'coupon_applied': request.data.get('coupon_applied'),
             'payment_method': request.data.get('payment_method', 'CARD'),
         }
-
         # Create the order
-        order = Order.objects.create(**order_data)  # Create order with the data provided
+        order = Order.objects.create(**order_data)
 
         # Create order items
+        order_items = []
         for item_data in order_items_data:
             product = get_object_or_404(Product, id=item_data['product'])
-            OrderItem.objects.create(order=order, product=product, quantity=item_data['quantity'])
+            order_item = OrderItem.objects.create(order=order, product=product, quantity=item_data['quantity'])
+            order_items.append(order_item)
+
+        # Send order confirmation email
+        self.send_order_confirmation_email(order, order_items)
 
         # Serialize the order data
         serializer = OrderSerializer(order)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+
+
+    def send_order_confirmation_email(self, order, order_items):
+        print(order, order_items)
+        items_details = "\n".join(
+            [f"{item.product.name} (x{item.quantity}) - ${item.product.price * item.quantity}"
+            for item in order_items]
+        )
+        subject = f"Order Confirmation - #{order.id}"
+        message = (
+            f"Thank you for your order, {order.name}!\n\n"
+            f"Order ID: {order.id}\n"
+            f"Total Price: ${order.total_price}\n\n"
+            f"Order Details:\n{items_details}\n\n"
+            f"Shipping Address: {order.shipping_address}\n"
+            f"Billing Address: {order.billing_address}\n\n"
+            "Thank you for shopping with us!"
+        )
+
+        # Retrieve the user's email based on username
+        user = User.objects.get(username=order.user.username)
+        recipient_email = user.email
+        print(recipient_email)
+
+        # Send the email
+        send_mail(
+            subject,
+            message,
+            settings.EMAIL_HOST_USER,
+            [recipient_email],
+            fail_silently=False,
+        )
+
 
     def list(self, request):
         # List all orders for the authenticated user
