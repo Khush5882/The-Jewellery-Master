@@ -1,27 +1,24 @@
+// Products.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Header from './Header';
-import Cart from './Cart';
-import Toast from './Toast';
+import Cart from './Cart'; // Ensure Cart is imported
+import Toast from './Toast'; // Import the Toast component
 
 export default function Products() {
   const [products, setProducts] = useState([]);
-  const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState('');
-  const [selectedPriceRange, setSelectedPriceRange] = useState('');
-  const [sortOption, setSortOption] = useState('');
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState('');
+  const [showToast, setShowToast] = useState(false); // State for showing toast
+  const [toastMessage, setToastMessage] = useState(''); // State for the toast message
   const [cartOpen, setCartOpen] = useState(false);
-  const [refreshCart, setRefreshCart] = useState(false);
-  const token = localStorage.getItem('accessToken');
+  const [refreshCart, setRefreshCart] = useState(false); // State to trigger cart refresh
+  const token = localStorage.getItem('accessToken'); // Retrieve the access token
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get('http://127.0.0.1:8000/api/products/', {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token}`, // Use the access token in the Authorization header
           },
         });
         setProducts(response.data);
@@ -30,23 +27,10 @@ export default function Products() {
       }
     };
 
-    const fetchCategories = async () => {
-      try {
-        const response = await axios.get('http://127.0.0.1:8000/api/categories/', {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        setCategories(response.data);
-      } catch (error) {
-        console.error('Error fetching categories:', error);
-      }
-    };
-
     fetchProducts();
-    fetchCategories();
   }, [token]);
 
+  // Function to handle adding the product to the cart
   const addToCart = async (productId) => {
     try {
       const response = await axios.post(
@@ -60,14 +44,14 @@ export default function Products() {
         }
       );
       if (response.status === 201) {
-        setCartOpen(true);
-        setRefreshCart(true);
-        setToastMessage('Product added to cart!');
-        setShowToast(true);
+        setCartOpen(true); // Open the cart
+        setRefreshCart(true); // Trigger the refresh function
+        setToastMessage('Product added to cart!'); 
+        setShowToast(true); 
 
         setTimeout(() => {
           setShowToast(false);
-          setRefreshCart(false);
+          setRefreshCart(false); // Reset the refresh state after a timeout
         }, 3000);
       }
     } catch (error) {
@@ -75,85 +59,10 @@ export default function Products() {
     }
   };
 
-  const applyFilters = () => {
-    let filtered = [...products];
-
-    if (selectedCategory) {
-      filtered = filtered.filter(product => product.category === selectedCategory);
-    }
-
-    if (selectedPriceRange) {
-      const [min, max] = selectedPriceRange.split('-').map(Number);
-      filtered = filtered.filter(product => product.price >= min && product.price <= max);
-    }
-
-    if (sortOption === 'priceLowHigh') {
-      filtered.sort((a, b) => a.price - b.price);
-    } else if (sortOption === 'priceHighLow') {
-      filtered.sort((a, b) => b.price - a.price);
-    } else if (sortOption === 'nameAsc') {
-      filtered.sort((a, b) => a.name.localeCompare(b.name));
-    } else if (sortOption === 'nameDesc') {
-      filtered.sort((a, b) => b.name.localeCompare(a.name));
-    }
-
-    return filtered;
-  };
-
-  const filteredProducts = applyFilters();
-
   return (
-    <div className="container mx-auto px-4 py-6">
-      <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">Our Products</h1>
-
-      {/* Filter and Sort Section */}
-      <div className="flex justify-center space-x-4 mb-8">
-        {/* Category Filter */}
-        <select
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
-          className="bg-white border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 p-2 shadow-sm"
-        >
-          <option value="">All Categories</option>
-          {categories.map((category) => (
-            <option key={category.id} value={category.name}>
-              {category.name}
-            </option>
-          ))}
-        </select>
-
-        {/* Price Filter */}
-        <select
-          value={selectedPriceRange}
-          onChange={(e) => setSelectedPriceRange(e.target.value)}
-          className="bg-white border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 p-2 shadow-sm"
-        >
-          <option value="">All Prices</option>
-          <option value="0-20">Under $20</option>
-          <option value="20-50">$20 - $50</option>
-          <option value="50-100">$50 - $100</option>
-          <option value="100-200">$100 - $200</option>
-          <option value="200-500">$200 - $500</option>
-          <option value="500-1000">$500 - $1000</option>
-        </select>
-
-        {/* Sorting Options */}
-        <select
-          value={sortOption}
-          onChange={(e) => setSortOption(e.target.value)}
-          className="bg-white border border-gray-300 text-gray-800 text-sm rounded-lg focus:ring-purple-500 focus:border-purple-500 p-2 shadow-sm"
-        >
-          <option value="">Sort By</option>
-          <option value="priceLowHigh">Price: Low to High</option>
-          <option value="priceHighLow">Price: High to Low</option>
-          <option value="nameAsc">Name: A to Z</option>
-          <option value="nameDesc">Name: Z to A</option>
-        </select>
-      </div>
-
-      {/* Product Cards */}
-      <div className="flex flex-wrap justify-center space-x-4">
-        {filteredProducts.map((product) => (
+    <div className='container'>
+      <div className="flex flex-wrap justify-center space-x-4 ">
+        {products.map((product) => (
           <div
             key={product.id}
             className="flex-shrink-0 m-6 relative overflow-hidden bg-purple-500 rounded-lg max-w-xs shadow-lg group"
@@ -202,7 +111,7 @@ export default function Products() {
                 </span>
               </div>
               <button
-                onClick={() => addToCart(product.id)}
+                onClick={() => addToCart(product.id)} // Simplified button click handler
                 className="mt-4 bg-purple-600 hover:bg-pink-500 text-white text-sm font-semibold py-2 px-4 rounded"
               >
                 Add to Cart
@@ -212,8 +121,9 @@ export default function Products() {
         ))}
       </div>
 
-      {/* Cart and Toast Components */}
-      <Cart open={cartOpen} setOpen={setCartOpen} refreshCart={refreshCart} />
+      {/* Pass refreshCart as a prop to the Cart component */}
+      <Cart open={cartOpen} setOpen={setCartOpen} refreshCart={refreshCart} /> 
+
       {showToast && <Toast message={toastMessage} onClose={() => setShowToast(false)} />}
     </div>
   );

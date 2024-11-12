@@ -16,6 +16,7 @@ import ThankYou from './components/App/ThankYou';
 import JewelryCustomization from './components/App/JewelleryCustomization';
 import Admin from './components/Admin/Admin';
 import ProtectedRoute from './components/ProtectedRoute'; // Import the ProtectedRoute component
+import ChatBot from './components/Chatbot/ChatBot'
 
 function App() {
   const location = useLocation(); // Get the current location
@@ -26,6 +27,9 @@ function App() {
       {location.pathname !== '/login' && location.pathname !== '/register' && location.pathname !== '/adminreg' && <Header />}
       
       <div>
+        {/* Render ChatBot only if the path is not /login or /register */}
+        {location.pathname !== '/login' && location.pathname !== '/register' && location.pathname !== '/adminreg' && <ChatBot />}
+
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
@@ -38,9 +42,11 @@ function App() {
           <Route path="/checkout" element={<CheckoutForm />} />
           <Route path="/thank-you" element={<ThankYou />} />
           <Route path="/jewellery-customization" element={<JewelryCustomization />} />
-          <Route path="/admin" element={<ProtectedRoute element={<Admin />} />} /> {/* Use ProtectedRoute here */}
+          <Route path="/admin" element={<ProtectedRoute element={<Admin />} />} />
         </Routes>
       </div>
+
+      {/* Render Footer only if the path is not /login or /register */}
       {location.pathname !== '/login' && location.pathname !== '/register' && location.pathname !== '/adminreg' && <Footer />}
     </>
   );
