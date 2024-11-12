@@ -1,5 +1,5 @@
-from .models import Product, Order, OrderItem,ProductCategory
-from .serializers import ProductSerializer, OrderSerializer, OrderItemSerializer, AddressSerializer, ProductCategorySerializer
+from .models import Product, Order, OrderItem
+from .serializers import ProductSerializer, OrderSerializer, OrderItemSerializer, AddressSerializer
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from .models import Cart, CartItem, User, Address
@@ -125,12 +125,18 @@ class AddressDetailView(generics.RetrieveUpdateDestroyAPIView):
 
 
 class CartViewSet(viewsets.ViewSet):
-    permission_classes = [IsAuthenticated]  
+    permission_classes = [IsAuthenticated]
 
     def list(self, request):
-        cart, _ = Cart.objects.get_or_create(user=request.user)
-        serializer = CartSerializer(cart)
-        return Response(serializer.data)
+        try:
+            # Fetch the cart, ensuring that only one cart exists for the user
+            cart = Cart.objects.get(user=request.user)
+            serializer = CartSerializer(cart)
+            return Response(serializer.data)
+        except Cart.DoesNotExist:
+            return Response({'message': 'Cart not found for user'}, status=status.HTTP_404_NOT_FOUND)
+        except MultipleObjectsReturned:
+            return Response({'error': 'Multiple carts found for this user, which is not allowed.'}, status=status.HTTP_400_BAD_REQUEST)
 
     def create(self, request):
         # POST request to add an item to the cart
@@ -138,8 +144,15 @@ class CartViewSet(viewsets.ViewSet):
         quantity = request.data.get('quantity', 1)
 
         product = get_object_or_404(Product, id=product_id)
-        cart, _ = Cart.objects.get_or_create(user=request.user)
 
+        # Ensure only one cart per user
+        try:
+            cart = Cart.objects.get(user=request.user)
+        except Cart.DoesNotExist:
+            # If no cart exists, create a new one
+            cart = Cart.objects.create(user=request.user)
+
+        # Check if cart already has the item, and if so, update quantity
         cart_item, created = CartItem.objects.get_or_create(cart=cart, product=product)
         if not created:
             cart_item.quantity += quantity
@@ -294,39 +307,11 @@ def get_insights(request):
     return Response(data)
 
 
-from rest_framework import viewsets
-from .models import Product, ProductCategory
-from .serializers import ProductSerializer, ProductCategorySerializer
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from rest_framework.response import Response
-from rest_framework.decorators import action
+class AllOrderListView(APIView):
+    permission_classes = [IsAuthenticated]
 
-class ProductCategoryViewSet(viewsets.ModelViewSet):
-    queryset = ProductCategory.objects.all()
-    serializer_class = ProductCategorySerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        return Response(serializer.data, status=201)
-
-class ProductViewSet(viewsets.ModelViewSet):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
-
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        return Response(serializer.data, status=201)
-
-    @action(detail=True, methods=['get'])
-    def by_category(self, request, pk=None):
-        """Retrieve products by category"""
-        category = self.get_object()
-        products = Product.objects.filter(category=category)
-        serializer = self.get_serializer(products, many=True)
-        return Response(serializer.data)
+    def get(self, request):
+        # List all orders
+        orders = Order.objects.all()  # If you want all orders, use .all(), or filter based on certain conditions
+        serializer = OrderSerializer(orders, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

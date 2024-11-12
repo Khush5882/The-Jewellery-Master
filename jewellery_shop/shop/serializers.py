@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Order, OrderItem, Product,ProductCategory
+from .models import Order, OrderItem, Product
 from .models import Cart, CartItem, Address
 from django.contrib.auth.models import User
 from .models import UserInfo
@@ -7,19 +7,10 @@ from django.conf import settings
 from .models import JewelryCustomization
 
 
-
-class ProductCategorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProductCategory
-        fields = ['id', 'name', 'description']
-
 class ProductSerializer(serializers.ModelSerializer):
-    category = ProductCategorySerializer(read_only=True)  # Nested serializer to display category details
-    category_id = serializers.PrimaryKeyRelatedField(queryset=ProductCategory.objects.all(), source='category', write_only=True)  # To assign category by ID
-
     class Meta:
         model = Product
-        fields = ['id', 'name', 'description', 'price', 'stock', 'image', 'category', 'category_id']
+        fields = ['id', 'name', 'description', 'price', 'stock', 'image']
         
 class AddressSerializer(serializers.ModelSerializer):
     class Meta:
