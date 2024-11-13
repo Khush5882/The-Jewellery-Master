@@ -235,6 +235,36 @@ class UserRegistrationView(generics.CreateAPIView):
     serializer_class = UserRegistrationSerializer
     permission_classes = [permissions.AllowAny]
 
+    def perform_create(self, serializer):
+        # Save the new user instance
+        user = serializer.save()
+        
+        # Send welcome email
+        self.send_welcome_email(user)
+
+    def send_welcome_email(self, user):
+        # Prepare email content
+        subject = "Welcome to Jewellery Masters!"
+        message = (
+            f"Hello {user.username},\n\n"
+            "Thank you for registering on our platform. We’re excited to have you onboard!\n\n"
+            "If you have any questions, feel free to reach out.\n\n"
+            "Best regards,\n"
+            "The Team Jeweellery Masters"
+        )
+
+        # Retrieve user's email
+        recipient_email = user.email
+
+        # Send the email
+        send_mail(
+            subject,
+            message,
+            settings.EMAIL_HOST_USER,
+            [recipient_email],
+            fail_silently=False,
+        )
+
 class UserLoginView(APIView):
     permission_classes = [permissions.AllowAny]
 
