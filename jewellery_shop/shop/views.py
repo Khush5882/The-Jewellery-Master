@@ -308,8 +308,39 @@ class JewelryCustomizationViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]  # Ensure user is authenticated
 
     def perform_create(self, serializer):
-        # Automatically assign the user from the request
-        serializer.save(user=self.request.user)
+        # Save the customization and assign the user
+        customization = serializer.save(user=self.request.user)
+        
+        # Send the customization confirmation email
+        self.send_customization_confirmation_email(customization)
+
+    def send_customization_confirmation_email(self, customization):
+        # Prepare email content
+        subject = f"Jewelry Customization Confirmation - #{customization.id}"
+        message = (
+            f"Hello {customization.user.username},\n\n"
+            f"Thank you for your jewelry customization request!\n\n"
+            f"Customization ID: {customization.id}\n"
+            f"Jewelry Type: {customization.get_jewelry_type_display()}\n"
+            f"Material: {customization.get_material_display()}\n"
+            f"Size: {customization.size or 'N/A'}\n"
+            f"Engraving Text: {customization.engraving_text or 'N/A'}\n"
+            f"Price: ${customization.price}\n\n"
+            "Our team will begin processing your request, and we’ll keep you updated.\n\n"
+            "Thank you for choosing us for your custom jewelry needs!"
+        )
+
+        # Retrieve user's email
+        recipient_email = customization.user.email
+
+        # Send email
+        send_mail(
+            subject,
+            message,
+            settings.EMAIL_HOST_USER,
+            [recipient_email],
+            fail_silently=False,
+        )
 
 
 
