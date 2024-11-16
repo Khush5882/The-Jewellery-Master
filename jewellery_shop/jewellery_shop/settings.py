@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'shop',
     'chatbot',
+    'metal_investment',
 ]
 
 MIDDLEWARE = [
