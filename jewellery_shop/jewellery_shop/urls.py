@@ -24,6 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('shop.urls')),  # Including your shop app's urls
     path('api/', include('chatbot.urls')),
+     path("metal/", include("metal_investment.urls")),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
