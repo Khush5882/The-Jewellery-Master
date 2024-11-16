@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'; // Import useEffect from React
 import Header from './Header';
 import Products from './Products';
+import MetalInvestment from './MetalInvestment';
 
 export default function Home() {
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -65,6 +66,7 @@ export default function Home() {
                     &#10095;
                 </button>
             </div>
+            
             <Products/>
         </div>
         

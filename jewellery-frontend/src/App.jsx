@@ -17,6 +17,7 @@ import JewelryCustomization from './components/App/JewelleryCustomization';
 import Admin from './components/Admin/Admin';
 import ProtectedRoute from './components/ProtectedRoute'; // Import the ProtectedRoute component
 import ChatBot from './components/Chatbot/ChatBot'
+import MetalPrices from './components/App/MetalInvestPage';
 
 function App() {
   const location = useLocation(); // Get the current location
@@ -43,6 +44,8 @@ function App() {
           <Route path="/thank-you" element={<ThankYou />} />
           <Route path="/jewellery-customization" element={<JewelryCustomization />} />
           <Route path="/admin" element={<ProtectedRoute element={<Admin />} />} />
+          <Route path="/metal-prices"  element={<MetalPrices />} />
+
         </Routes>
       </div>
 

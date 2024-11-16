@@ -64,6 +64,7 @@ const Header = () => {
             <a href="/shop" className="text-gray-900 hover:text-gray-600">Shop</a>
             <a href="/about" className="text-gray-900 hover:text-gray-600">About</a>
             <a href="/jewellery-customization" className="text-gray-900 hover:text-gray-600">Customize</a>
+            <a href="/metal-prices" className="text-gray-900 hover:text-gray-600">Metal Prices</a>
             {isAdmin && ( // Conditionally render the Admin link
               <a href="/admin" className="text-gray-900 hover:text-gray-600">Admin</a>
             )}
