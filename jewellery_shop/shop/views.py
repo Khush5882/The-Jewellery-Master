@@ -1,5 +1,5 @@
-from .models import Product, Order, OrderItem
-from .serializers import ProductSerializer, OrderSerializer, OrderItemSerializer, AddressSerializer
+from .models import Category, SubCategory, Tag, Product, Order, OrderItem
+from .serializers import CategorySerializer, SubCategorySerializer, TagSerializer, ProductSerializer, OrderSerializer, OrderItemSerializer, AddressSerializer
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from .models import Cart, CartItem, User, Address
@@ -24,11 +24,35 @@ from .serializers import JewelryCustomizationSerializer
 from django.core.mail import send_mail
 from django.conf import settings
 from rest_framework.decorators import api_view
+from django.db.models import Q
+
+
+class CategoryViewSet(viewsets.ModelViewSet):
+    
+    queryset = Category.objects.all()
+    serializer_class = CategorySerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+
+class SubCategoryViewSet(viewsets.ModelViewSet):
+    
+    queryset = SubCategory.objects.all()
+    serializer_class = SubCategorySerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+
+class TagViewSet(viewsets.ModelViewSet):
+    
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+
 
 class ProductViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-
+    permission_classes = [IsAuthenticated]
 
 
 # Order List/Create View
@@ -414,4 +438,36 @@ class AllOrderListView(APIView):
         # List all orders
         orders = Order.objects.all()  # If you want all orders, use .all(), or filter based on certain conditions
         serializer = OrderSerializer(orders, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    
+    
+class ProductFilterView(APIView):
+    """
+    API View to fetch products based on category, subcategory, or tags.
+    """
+    def get(self, request):
+        # Extract query parameters
+        category_id = request.query_params.get('category', None)
+        subcategory_id = request.query_params.get('subcategory', None)
+        tag_ids = request.query_params.getlist('tags', None)  # Can accept multiple tag IDs
+
+        # Create a query object to filter products
+        query = Q()
+
+        if category_id:
+            query &= Q(category=category_id)  # Match category field in the JSON
+
+        if subcategory_id:
+            query &= Q(sub_category=subcategory_id)  # Match sub_category field in the JSON
+
+        if tag_ids:
+            query &= Q(tags__in=tag_ids)  # Match tags field in the JSON
+
+        # Fetch filtered products
+        products = Product.objects.filter(query).distinct()
+
+        # Serialize the products
+        serializer = ProductSerializer(products, many=True)
+
         return Response(serializer.data, status=status.HTTP_200_OK)

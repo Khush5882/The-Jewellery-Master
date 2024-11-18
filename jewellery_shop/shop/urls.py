@@ -14,7 +14,11 @@ from .views import (
     JewelryCustomizationViewSet,
     jewelry_options,
     get_insights,
-    AllOrderListView# Import the get_insights view
+    AllOrderListView,
+    CategoryViewSet, 
+    SubCategoryViewSet, 
+    TagViewSet,
+    ProductFilterView
 )
 
 # Create a router and register viewsets
@@ -23,6 +27,11 @@ router.register(r'products', ProductViewSet)
 router.register(r'cart', CartViewSet, basename='cart')
 router.register(r'orders', OrderViewSet, basename='order')
 router.register(r'jewelry_customization', JewelryCustomizationViewSet)
+
+router.register(r'categories', CategoryViewSet, basename='category')
+router.register(r'subcategories', SubCategoryViewSet, basename='subcategory')
+router.register(r'tags', TagViewSet, basename='tag')
+
 
 # URL patterns
 urlpatterns = [
@@ -37,6 +46,8 @@ urlpatterns = [
     path('api/jewelry_options/', jewelry_options, name='jewelry-options'),
     path('api/insights/', get_insights, name='get-insights'),
     path('allorders/', AllOrderListView.as_view(), name='order-list'),
+    path('products/filter/', ProductFilterView.as_view(), name='product-filter'),
+
 # Add the insights endpoint
 ]
 
