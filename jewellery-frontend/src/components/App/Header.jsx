@@ -73,12 +73,12 @@ const Header = () => {
           {/* Search, Cart, and Profile/Login Button */}
           <div className="flex items-center space-x-4">
             <div className="relative">
-              <input
+              {/* <input
                 type="text"
                 placeholder="Search"
                 className="border border-gray-300 rounded-full px-4 py-1 text-sm focus:outline-none focus:border-indigo-500"
-              />
-              <MagnifyingGlassIcon className="h-5 w-5 text-gray-500 absolute top-2 right-2" />
+              /> */}
+              {/* <MagnifyingGlassIcon className="h-5 w-5 text-gray-500 absolute top-2 right-2" /> */}
             </div>
 
             <div>

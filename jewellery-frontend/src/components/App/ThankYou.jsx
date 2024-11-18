@@ -1,4 +1,3 @@
-// src/components/ThankYou.js
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
@@ -32,11 +31,11 @@ const ThankYou = () => {
 
         // Loop through each order item and fetch product details
         for (const item of orderSummary.order_items) {
-          const productDetails = await fetchProductById(item.product); // Fetch product details by ID
+          const productDetails = await fetchProductById(item.product.id); // Fetch product details by ID
           if (productDetails) {
             fetchedProducts.push({ ...productDetails, quantity: item.quantity }); // Add product details and quantity to the array
           } else {
-            setError(`Product with ID ${item.product} not found.`); // Set error if product is not found
+            console.error(`Failed to fetch product details for product ID: ${item.product.id}`);
           }
         }
         setProducts(fetchedProducts); // Set the state with fetched products

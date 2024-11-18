@@ -1,36 +1,81 @@
-// Products.js
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom'; // Import Link
 import Header from './Header';
-import Cart from './Cart'; // Ensure Cart is imported
-import Toast from './Toast'; // Import the Toast component
+import Cart from './Cart'; 
+import Toast from './Toast'; 
+import Select from 'react-select';
 
 export default function Products() {
   const [products, setProducts] = useState([]);
-  const [showToast, setShowToast] = useState(false); // State for showing toast
-  const [toastMessage, setToastMessage] = useState(''); // State for the toast message
+  const [categories, setCategories] = useState([]);
+  const [subcategories, setSubcategories] = useState([]);
+  const [tags, setTags] = useState([]);
+
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedSubcategory, setSelectedSubcategory] = useState('');
+  const [selectedTags, setSelectedTags] = useState([]);
+
+  const [showToast, setShowToast] = useState(false); 
+  const [toastMessage, setToastMessage] = useState(''); 
   const [cartOpen, setCartOpen] = useState(false);
-  const [refreshCart, setRefreshCart] = useState(false); // State to trigger cart refresh
-  const token = localStorage.getItem('accessToken'); // Retrieve the access token
+  const [refreshCart, setRefreshCart] = useState(false); 
+  const token = localStorage.getItem('accessToken'); 
+
+  const fetchProducts = async () => {
+    try {
+      let url = 'http://127.0.0.1:8000/api/products/';
+      const queryParams = new URLSearchParams();
+
+      if (selectedCategory) queryParams.append('category', selectedCategory);
+      if (selectedSubcategory) queryParams.append('subcategory', selectedSubcategory);
+      selectedTags.forEach((tag) => queryParams.append('tags', tag));
+
+      if (queryParams.toString()) {
+        url = `http://127.0.0.1:8000/products/filter/?${queryParams.toString()}`;
+      }
+
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const baseURL = 'http://127.0.0.1:8000';
+      const productsWithFullImages = response.data.map((product) => ({
+        ...product,
+        image: product.image.startsWith('http') ? product.image : `${baseURL}${product.image}`,
+      }));
+
+      setProducts(productsWithFullImages);
+    } catch (error) {
+      console.error('Error fetching the products:', error);
+    }
+  };
+
+  const fetchFilters = async () => {
+    try {
+      const categoryResponse = await axios.get('http://127.0.0.1:8000/api/categories/');
+      const subcategoryResponse = await axios.get('http://127.0.0.1:8000/api/subcategories/');
+      const tagsResponse = await axios.get('http://127.0.0.1:8000/api/tags/');
+
+      setCategories(categoryResponse.data);
+      setSubcategories(subcategoryResponse.data);
+      setTags(tagsResponse.data);
+    } catch (error) {
+      console.error('Error fetching filters:', error);
+    }
+  };
 
   useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const response = await axios.get('http://127.0.0.1:8000/api/products/', {
-          headers: {
-            Authorization: `Bearer ${token}`, // Use the access token in the Authorization header
-          },
-        });
-        setProducts(response.data);
-      } catch (error) {
-        console.error('Error fetching the products:', error);
-      }
-    };
-
+    fetchFilters();
     fetchProducts();
-  }, [token]);
+  }, []);
 
-  // Function to handle adding the product to the cart
+  useEffect(() => {
+    fetchProducts();
+  }, [selectedCategory, selectedSubcategory, selectedTags]);
+
   const addToCart = async (productId) => {
     try {
       const response = await axios.post(
@@ -44,14 +89,14 @@ export default function Products() {
         }
       );
       if (response.status === 201) {
-        setCartOpen(true); // Open the cart
-        setRefreshCart(true); // Trigger the refresh function
-        setToastMessage('Product added to cart!'); 
-        setShowToast(true); 
+        setCartOpen(true); 
+        setRefreshCart(true);
+        setToastMessage('Product added to cart!');
+        setShowToast(true);
 
         setTimeout(() => {
           setShowToast(false);
-          setRefreshCart(false); // Reset the refresh state after a timeout
+          setRefreshCart(false);
         }, 3000);
       }
     } catch (error) {
@@ -61,6 +106,56 @@ export default function Products() {
 
   return (
     <div className='container'>
+      <div className="filter-section my-6 space-y-4">
+        <div className="flex flex-wrap gap-4">
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">All Categories</option>
+            {categories.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={selectedSubcategory}
+            onChange={(e) => setSelectedSubcategory(e.target.value)}
+            className="px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">All Subcategories</option>
+            {subcategories.map((subcategory) => (
+              <option key={subcategory.id} value={subcategory.id}>
+                {subcategory.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="flex flex-wrap gap-4">
+          <Select
+            isMulti
+            options={tags.map((tag) => ({
+              value: tag.id,
+              label: tag.name,
+            }))}
+            value={tags.filter((tag) => selectedTags.includes(tag.id)).map((tag) => ({
+              value: tag.id,
+              label: tag.name,
+            }))}
+            onChange={(selectedOptions) => {
+              setSelectedTags(selectedOptions ? selectedOptions.map(option => option.value) : []);
+            }}
+            className="w-full max-w-xl"
+            placeholder="Select Tags"
+            closeMenuOnSelect={false}
+          />
+        </div>
+      </div>
+
       <div className="flex flex-wrap justify-center space-x-4 ">
         {products.map((product) => (
           <div
@@ -111,20 +206,24 @@ export default function Products() {
                 </span>
               </div>
               <button
-                onClick={() => addToCart(product.id)} // Simplified button click handler
-                className="mt-4 bg-purple-600 hover:bg-pink-500 text-white text-sm font-semibold py-2 px-4 rounded"
+                onClick={() => addToCart(product.id)}
+                className="mt-4 bg-purple-600 hover:bg-pink-500 text-white text-sm font-medium px-6 py-2 rounded-lg"
               >
                 Add to Cart
               </button>
+              <Link
+  to={`/product/${product.id}`}
+  className="mt-4 block text-sm text-white bg-pink-500 hover:bg-pink-600 font-medium px-4 py-2 rounded-lg text-center"
+>
+  View Details
+</Link>
+
             </div>
           </div>
         ))}
       </div>
-
-      {/* Pass refreshCart as a prop to the Cart component */}
-      <Cart open={cartOpen} setOpen={setCartOpen} refreshCart={refreshCart} /> 
-
-      {showToast && <Toast message={toastMessage} onClose={() => setShowToast(false)} />}
+      <Toast show={showToast} message={toastMessage} />
+      <Cart open={cartOpen} setOpen={setCartOpen} refreshCart={refreshCart} />
     </div>
   );
 }
