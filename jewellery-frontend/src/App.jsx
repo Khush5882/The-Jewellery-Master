@@ -7,7 +7,7 @@ import Products from './components/App/Products';
 import Cart from './components/App/Cart';
 import Home from './components/App/Home';
 import Footer from './components/App/Footer';
-import Header from './components/App/Header'; // Import your Header component
+import Header from './components/App/Header';
 import AboutJewelryMaster from './components/App/About';
 import AdminRegister from './components/Auth/AdminReg';
 import UserProfile from './components/App/Profile';
@@ -15,7 +15,7 @@ import CheckoutForm from './components/App/CheckoutForm';
 import ThankYou from './components/App/ThankYou';
 import JewelryCustomization from './components/App/JewelleryCustomization';
 import Admin from './components/Admin/Admin';
-import ProtectedRoute from './components/ProtectedRoute'; // Import the ProtectedRoute component
+import ProtectedRoute from './components/ProtectedRoute';
 import ChatBot from './components/Chatbot/ChatBot'
 import MetalPrices from './components/App/MetalInvestPage';
 import ProductPage from './components/App/ProductPage';
@@ -27,8 +27,8 @@ function App() {
     <>
       {/* Render Header only if the path is not /login or /register */}
       {location.pathname !== '/login' && location.pathname !== '/register' && location.pathname !== '/adminreg' && <Header />}
-      
-      <div>
+
+      <div className="bg-primary text-secondary">
         {/* Render ChatBot only if the path is not /login or /register */}
         {location.pathname !== '/login' && location.pathname !== '/register' && location.pathname !== '/adminreg' && <ChatBot />}
 
@@ -45,10 +45,8 @@ function App() {
           <Route path="/thank-you" element={<ThankYou />} />
           <Route path="/jewellery-customization" element={<JewelryCustomization />} />
           <Route path="/admin" element={<ProtectedRoute element={<Admin />} />} />
-          <Route path="/metal-prices"  element={<MetalPrices />} />
+          <Route path="/metal-prices" element={<MetalPrices />} />
           <Route path="/product/:id" element={<ProductPage />} />
-
-
         </Routes>
       </div>
 
