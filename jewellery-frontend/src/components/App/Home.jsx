@@ -63,19 +63,18 @@ export default function Home() {
                 </button>
             </div>
 
-            {/* Promotional Banner */}
-            <section className="bg-pink-100 py-16">
-                <div className="max-w-7xl mx-auto px-6 text-center">
-                    <h2 className="text-4xl font-extrabold text-gray-900 mb-6">Be Love</h2>
-                    <p className="text-lg text-gray-600 leading-relaxed mb-6">
-                        Open your heart to our new collection that celebrates love in all its forms.
-                    </p>
-                    <button className="px-6 py-3 bg-pink-500 text-white rounded-full hover:bg-pink-600">
-                        Shop the Collection
-                    </button>
-                </div>
+           {/* Promotional Banner */}
+            <section className="bg-primary py-16"> {/* Changed from bg-pink-100 to bg-primary */}
+              <div className="max-w-7xl mx-auto px-6 text-center">
+                <h2 className="text-4xl font-extrabold text-white mb-6">Be Love</h2> {/* Changed text color to white for better contrast */}
+                   <p className="text-lg text-white leading-relaxed mb-6">
+                      Open your heart to our new collection that celebrates love in all its forms.
+                   </p>
+                  <button className="px-6 py-3 bg-secondary text-white rounded-full hover:bg-primary hover:text-white transition-all">
+                     Shop the Collection
+                  </button>
+              </div>
             </section>
-
             {/* Featured Collection */}
             <section className="bg-gray-100 py-16">
                 <div className="max-w-7xl mx-auto px-6 text-center">
