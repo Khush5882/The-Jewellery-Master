@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Header from './Header';
+import HeroSection from './HeroSection'; // Import HeroSection
 import MetalInvestment from './MetalInvestment';
 
 export default function Home() {
@@ -27,6 +27,9 @@ export default function Home() {
 
     return (
         <div>
+            {/* Hero Section */}
+            <HeroSection /> {/* Render Hero Section */}
+
             {/* Carousel Section */}
             <div className="relative w-full h-[500px]">
                 <div className="carousel h-full">
@@ -73,17 +76,47 @@ export default function Home() {
                 </div>
             </section>
 
+            {/* Featured Collection */}
+            <section className="bg-gray-100 py-16">
+                <div className="max-w-7xl mx-auto px-6 text-center">
+                    <h2 className="text-4xl font-extrabold text-gray-900 mb-6">Featured Collection</h2>
+                    <p className="text-lg text-gray-600 leading-relaxed mb-6">
+                        Discover our curated selection of pieces that embody elegance and style.
+                    </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                        {[ 
+                            { name: 'Elegant Ring', image: 'elegant-ring.jpg', price: '$120' },
+                            { name: 'Classic Necklace', image: 'classic-necklace.jpg', price: '$150' },
+                            { name: 'Stylish Bracelet', image: 'stylish-bracelet.jpg', price: '$130' }
+                        ].map((item) => (
+                            <div key={item.name} className="bg-white p-6 rounded-lg shadow-lg hover:shadow-xl transition-all transform hover:scale-105">
+                                <img
+                                    src={`/${item.image}`}
+                                    alt={item.name}
+                                    className="w-full h-64 object-cover mb-4 rounded"
+                                />
+                                <h3 className="text-2xl font-semibold text-gray-800 mb-2">{item.name}</h3>
+                                <p className="text-lg text-gray-600 mb-4">{item.price}</p>
+                                <button className="px-6 py-2 bg-primary text-white rounded-full hover:bg-accent transition-all">
+                                    View Details
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
             {/* Shop by Category */}
             <section className="py-16">
                 <div className="max-w-7xl mx-auto px-6 text-center">
                     <h2 className="text-4xl font-extrabold text-gray-900 mb-6">Shop by Category</h2>
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-8">
-                        {[
+                        {[ 
                             { name: 'Charms', image: 'charms.jpg' },
                             { name: 'Necklaces', image: 'necklaces.jpg' },
                             { name: 'Rings', image: 'rings.jpg' },
                             { name: 'Bracelets', image: 'bracelets.jpg' },
-                            { name: 'Earrings', image: 'earrings.jpg' },
+                            { name: 'Earrings', image: 'earrings.jpg' }
                         ].map((category) => (
                             <div key={category.name} className="relative group">
                                 <img
@@ -94,36 +127,6 @@ export default function Home() {
                                 <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                                     <span className="text-white text-lg font-semibold">{category.name}</span>
                                 </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-            </section>
-
-            {/* Featured Collection */}
-            <section className="bg-gray-100 py-16">
-                <div className="max-w-7xl mx-auto px-6 text-center">
-                    <h2 className="text-4xl font-extrabold text-gray-900 mb-6">Featured Collection</h2>
-                    <p className="text-lg text-gray-600 leading-relaxed mb-6">
-                        Discover our curated selection of pieces that embody elegance and style.
-                    </p>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                        {[
-                            { name: 'Elegant Ring', image: 'elegant-ring.jpg', price: '$120' },
-                            { name: 'Classic Necklace', image: 'classic-necklace.jpg', price: '$150' },
-                            { name: 'Stylish Bracelet', image: 'stylish-bracelet.jpg', price: '$130' },
-                        ].map((item) => (
-                            <div key={item.name} className="bg-white p-6 rounded-lg shadow-lg">
-                                <img
-                                    src={`/${item.image}`}
-                                    alt={item.name}
-                                    className="w-full h-64 object-cover mb-4 rounded"
-                                />
-                                <h3 className="text-2xl font-semibold text-gray-800 mb-2">{item.name}</h3>
-                                <p className="text-lg text-gray-600 mb-4">{item.price}</p>
-                                <button className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-                                    View Details
-                                </button>
                             </div>
                         ))}
                     </div>
