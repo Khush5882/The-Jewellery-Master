@@ -1,4 +1,13 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.bg-primary {
+    background-color: theme('colors.primary');
+  }
+  .text-secondary {
+    color: theme('colors.secondary');
+  }
+  .border-accent {
+    border-color: theme('colors.accent');
+  }
