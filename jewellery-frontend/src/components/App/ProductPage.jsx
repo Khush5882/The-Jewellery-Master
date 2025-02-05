@@ -1,39 +1,82 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { useParams, Link } from 'react-router-dom'; // Import useParams for URL params
+import { Link } from 'react-router-dom'; // Import Link
+import Select from 'react-select';
 import Header from './Header';
-import Cart from './Cart';
-import Toast from './Toast';
+import Cart from './Cart'; 
+import Toast from './Toast'; 
 
-export default function ProductPage() {
-  const { id } = useParams(); // Get the product ID from the URL
-  const [product, setProduct] = useState(null);
+export default function Products() {
+  const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [subcategories, setSubcategories] = useState([]);
+  const [tags, setTags] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('');
+  const [selectedSubcategory, setSelectedSubcategory] = useState('');
+  const [selectedTags, setSelectedTags] = useState([]);
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
-  const token = localStorage.getItem('accessToken'); 
+  const [cartOpen, setCartOpen] = useState(false);
+  const [refreshCart, setRefreshCart] = useState(false);
+  const token = localStorage.getItem('accessToken');
 
-  // Fetch product details by ID
-  const fetchProductDetails = async () => {
+  // Fetch products
+  const fetchProducts = async () => {
     try {
-      const response = await axios.get(`http://127.0.0.1:8000/api/products/${id}/`, {
+      let url = 'http://127.0.0.1:8000/api/products/';
+      const queryParams = new URLSearchParams();
+      
+      if (selectedCategory) queryParams.append('category', selectedCategory);
+      if (selectedSubcategory) queryParams.append('subcategory', selectedSubcategory);
+      selectedTags.forEach((tag) => queryParams.append('tags', tag));
+
+      if (queryParams.toString()) {
+        url = http://127.0.0.1:8000/products/filter/?${queryParams.toString()};
+      }
+
+      const response = await axios.get(url, {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: Bearer ${token},
         },
       });
 
       const baseURL = 'http://127.0.0.1:8000';
-      const productWithFullImage = {
-        ...response.data,
-        image: response.data.image.startsWith('http') ? response.data.image : `${baseURL}${response.data.image}`,
-      };
+      const productsWithFullImages = response.data.map((product) => ({
+        ...product,
+        image: product.image.startsWith('http') ? product.image : ${baseURL}${product.image},
+      }));
 
-      setProduct(productWithFullImage);
+      setProducts(productsWithFullImages);
     } catch (error) {
-      console.error('Error fetching product details:', error);
+      console.error('Error fetching the products:', error);
     }
   };
 
-  // Handle add to cart
+  // Fetch categories, subcategories, and tags
+  const fetchFilters = async () => {
+    try {
+      const categoryResponse = await axios.get('http://127.0.0.1:8000/api/categories/');
+      const subcategoryResponse = await axios.get('http://127.0.0.1:8000/api/subcategories/');
+      const tagsResponse = await axios.get('http://127.0.0.1:8000/api/tags/');
+
+      setCategories(categoryResponse.data);
+      setSubcategories(subcategoryResponse.data);
+      setTags(tagsResponse.data);
+    } catch (error) {
+      console.error('Error fetching filters:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchFilters();
+    fetchProducts();
+  }, []);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [selectedCategory, selectedSubcategory, selectedTags]);
+
+  // Add product to cart
   const addToCart = async (productId) => {
     try {
       const response = await axios.post(
@@ -41,17 +84,21 @@ export default function ProductPage() {
         { product_id: productId, quantity: 1 },
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: Bearer ${token},
             'Content-Type': 'application/json',
           },
         }
       );
+
       if (response.status === 201) {
+        setCartOpen(true); 
+        setRefreshCart(true);
         setToastMessage('Product added to cart!');
         setShowToast(true);
 
         setTimeout(() => {
           setShowToast(false);
+          setRefreshCart(false);
         }, 3000);
       }
     } catch (error) {
@@ -59,43 +106,68 @@ export default function ProductPage() {
     }
   };
 
-  useEffect(() => {
-    fetchProductDetails();
-  }, [id]);
-
-  if (!product) {
-    return <div>Loading...</div>; // Show loading while the product is being fetched
-  }
-
   return (
-    <div className="container">
-      <div className="product-page my-6">
-        <div className="flex flex-wrap gap-10">
-          <div className="product-image flex-shrink-0 w-1/2">
-            <img src={product.image} alt={product.name} className="w-full h-full object-cover rounded-lg" />
-          </div>
+    <div className="shop-page">
+      <h1 className="page-title">Shop Jewelry</h1>
 
-          <div className="product-details w-1/2">
-            <h1 className="text-3xl font-semibold text-purple-500">{product.name}</h1>
-            <p className="text-lg text-gray-700 my-4">{product.description}</p>
-            <div className="flex items-center gap-4">
-              <span className="text-xl font-semibold text-purple-500">${product.price}</span>
-              <button
-                onClick={() => addToCart(product.id)}
-                className="bg-purple-600 hover:bg-pink-500 text-white text-sm font-medium px-6 py-2 rounded-lg"
-              >
-                Add to Cart
-              </button>
+      <div className="filters-container">
+        <select
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+          className="filter-select"
+        >
+          <option value="">All Categories</option>
+          {categories.map((category) => (
+            <option key={category.id} value={category.id}>
+              {category.name}
+            </option>
+          ))}
+        </select>
+
+        <select
+          value={selectedSubcategory}
+          onChange={(e) => setSelectedSubcategory(e.target.value)}
+          className="filter-select"
+        >
+          <option value="">All Subcategories</option>
+          {subcategories.map((subcategory) => (
+            <option key={subcategory.id} value={subcategory.id}>
+              {subcategory.name}
+            </option>
+          ))}
+        </select>
+
+        <Select
+          isMulti
+          options={tags.map((tag) => ({ value: tag.id, label: tag.name }))}
+          value={tags.filter((tag) => selectedTags.includes(tag.id)).map((tag) => ({ value: tag.id, label: tag.name }))}
+          onChange={(selectedOptions) => {
+            setSelectedTags(selectedOptions ? selectedOptions.map(option => option.value) : []);
+          }}
+          className="tags-select"
+          placeholder="Select Tags"
+          closeMenuOnSelect={false}
+        />
+      </div>
+
+      <div className="product-grid">
+        {products.map((product) => (
+          <div key={product.id} className="product-card">
+            <img src={product.image} alt={product.name} className="product-image" />
+            <div className="product-info">
+              <h3 className="product-name">{product.name}</h3>
+              <p className="product-price">${product.price}</p>
+              <div className="product-actions">
+                <button onClick={() => addToCart(product.id)} className="add-to-cart-btn">Add to Cart</button>
+                <Link to={/product/${product.id}} className="view-details-btn">View Details</Link>
+              </div>
             </div>
           </div>
-        </div>
-
-        <div className="my-6">
-          <Link to="/shop" className="text-sm text-purple-500 underline">Back to Products</Link>
-        </div>
+        ))}
       </div>
-      
+
       <Toast show={showToast} message={toastMessage} />
+      <Cart open={cartOpen} setOpen={setCartOpen} refreshCart={refreshCart} />
     </div>
   );
 }
