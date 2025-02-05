@@ -5,7 +5,40 @@ import axios from 'axios';
 const AddAddressForm = ({ token, setAddresses, setShowAddAddress }) => {
   const [newAddress, setNewAddress] = useState({ street: '', city: '', state: '', postal_code: '' , country:'canada'}); // Update key to postal_code
   const [error, setError] = useState('');
+  const addressInputRef = useRef(null);
 
+  useEffect(() => {
+    // Load Google Places API script
+    const loadScript = (url, callback) => {
+      let script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.src = url;
+      script.onload = callback;
+      document.head.appendChild(script);
+    };
+
+    // api for automatic address completion
+     
+    loadScript(`https://api.geoapify.com/v1/geocode/autocomplete?text=Mosco&apiKey=23acef0a0a1d42779582f49bd14b272c`, () => {
+    
+      const autocomplete = new window.google.maps.places.Autocomplete(addressInputRef.current, {
+        types: ['address'],
+      });
+
+      autocomplete.addListener('place_changed', () => {
+        const place = autocomplete.getPlace();
+        setNewAddress({
+          ...newAddress,
+          street: place.formatted_address,
+          city: place.address_components.find(component => component.types.includes('locality'))?.long_name || '',
+          state: place.address_components.find(component => component.types.includes('administrative_area_level_1'))?.short_name || '',
+          postal_code: place.address_components.find(component => component.types.includes('postal_code'))?.long_name || '',
+        });
+      });
+    });
+  }, []);
+
+  
   // Handle new address submission
   const handleAddressAddition = async (e) => {
     e.preventDefault();
