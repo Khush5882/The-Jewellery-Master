@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom'; // Import Link
-import Select from 'react-select';
+import Select from 'react-select'; // Importing react-select for multi-select tags
 import Header from './Header';
 import Cart from './Cart'; 
 import Toast from './Toast'; 
 
 export default function Products() {
+  // State variables to manage products, filters, and UI states
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [subcategories, setSubcategories] = useState([]);
@@ -20,7 +21,7 @@ export default function Products() {
   const [refreshCart, setRefreshCart] = useState(false);
   const token = localStorage.getItem('accessToken');
 
-  // Fetch products
+  // Fetch products based on selected filters
   const fetchProducts = async () => {
     try {
       let url = 'http://127.0.0.1:8000/api/products/';
@@ -31,19 +32,19 @@ export default function Products() {
       selectedTags.forEach((tag) => queryParams.append('tags', tag));
 
       if (queryParams.toString()) {
-        url = http://127.0.0.1:8000/products/filter/?${queryParams.toString()};
+        url = `http://127.0.0.1:8000/products/filter/?${queryParams.toString()}`; // Corrected syntax with backticks
       }
 
       const response = await axios.get(url, {
         headers: {
-          Authorization: Bearer ${token},
+          Authorization: `Bearer ${token}`,
         },
       });
 
       const baseURL = 'http://127.0.0.1:8000';
       const productsWithFullImages = response.data.map((product) => ({
         ...product,
-        image: product.image.startsWith('http') ? product.image : ${baseURL}${product.image},
+        image: product.image.startsWith('http') ? product.image : `${baseURL}${product.image}`, // Corrected syntax with backticks
       }));
 
       setProducts(productsWithFullImages);
@@ -52,7 +53,7 @@ export default function Products() {
     }
   };
 
-  // Fetch categories, subcategories, and tags
+  // Fetch categories, subcategories, and tags for filtering
   const fetchFilters = async () => {
     try {
       const categoryResponse = await axios.get('http://127.0.0.1:8000/api/categories/');
@@ -67,11 +68,13 @@ export default function Products() {
     }
   };
 
+  // Run when component mounts
   useEffect(() => {
     fetchFilters();
     fetchProducts();
   }, []);
 
+  // Re-fetch products when filters are updated
   useEffect(() => {
     fetchProducts();
   }, [selectedCategory, selectedSubcategory, selectedTags]);
@@ -84,7 +87,7 @@ export default function Products() {
         { product_id: productId, quantity: 1 },
         {
           headers: {
-            Authorization: Bearer ${token},
+            Authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
           },
         }
@@ -159,7 +162,7 @@ export default function Products() {
               <p className="product-price">${product.price}</p>
               <div className="product-actions">
                 <button onClick={() => addToCart(product.id)} className="add-to-cart-btn">Add to Cart</button>
-                <Link to={/product/${product.id}} className="view-details-btn">View Details</Link>
+                <Link to={`/product/${product.id}`} className="view-details-btn">View Details</Link>
               </div>
             </div>
           </div>
