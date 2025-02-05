@@ -63,7 +63,7 @@ const JewelryCustomizationPage = () => {
 
   const updatePreviewImage = (data) => {
     if (data.jewelryType && data.material) {
-      setPreviewImage(/images/${data.jewelryType}_${data.material}.jpg);
+      setPreviewImage(`/images/${data.jewelryType}_${data.material}.jpg`);
     } else {
       setPreviewImage('');
     }
@@ -113,7 +113,7 @@ const JewelryCustomizationPage = () => {
   };
 
   return (
-    <div className={jewelry-customization-page ${darkMode ? 'dark' : ''}}>
+    <div className={`jewelry-customization-page ${darkMode ? 'dark' : ''}`}>
       <div className="customization-container">
         <h1 className="page-title">Customize Your Jewelry</h1>
 
