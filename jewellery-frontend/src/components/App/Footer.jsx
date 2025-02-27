@@ -1,67 +1,74 @@
-import React from 'react';
+import { FaFacebookF, FaInstagram, FaTwitter, FaTiktok, FaShoppingBag, FaPhone, FaEnvelope } from "react-icons/fa";
 
-export default function Footer() {
+const Footer = () => {
   return (
-    <footer className="w-full bg-secondary text-white p-8">
-      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-        {/* Company Info */}
-        <div>
-          <h3 className="text-2xl font-semibold mb-4">The Jewel Masters</h3>
-          <p className="text-sm mb-4">Bringing elegance and artistry to your life with our curated selection of fine jewelry.</p>
-          <div className="flex space-x-4">
-            {/* Social Media Icons */}
-            <a href="https://facebook.com" className="text-white hover:text-accent transition-colors">
-              <i className="fab fa-facebook-f"></i>
-            </a>
-            <a href="https://instagram.com" className="text-white hover:text-accent transition-colors">
-              <i className="fab fa-instagram"></i>
-            </a>
-            <a href="https://twitter.com" className="text-white hover:text-accent transition-colors">
-              <i className="fab fa-twitter"></i>
-            </a>
+    <footer className="bg-[#f5d5ae] text-[#4b0f0f] py-10 px-6 md:px-12">
+      <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between">
+        
+        {/* Left Section - Branding */}
+        <div className="mb-6 md:mb-0">
+          <h2 className="text-2xl font-semibold text-[#4b0f0f]">AS Jewelers</h2>
+          <p className="italic text-[#8b0000] mt-2">Elegance in Every Detail.</p>
+          <div className="mt-4 flex space-x-4">
+            <a href="#" className="text-[#4b0f0f] hover:text-[#8b0000] transition"><FaFacebookF size={20} /></a>
+            <a href="#" className="text-[#4b0f0f] hover:text-[#8b0000] transition"><FaInstagram size={20} /></a>
+            <a href="#" className="text-[#4b0f0f] hover:text-[#8b0000] transition"><FaTwitter size={20} /></a>
+            <a href="#" className="text-[#4b0f0f] hover:text-[#8b0000] transition"><FaTiktok size={20} /></a>
           </div>
         </div>
 
-        {/* Quick Links */}
-        <div>
-          <h4 className="text-xl font-semibold mb-4">Quick Links</h4>
-          <ul className="space-y-2">
-            <li><a href="/shop" className="text-white hover:text-accent transition-colors">Shop</a></li>
-            <li><a href="/about" className="text-white hover:text-accent transition-colors">About Us</a></li>
-            <li><a href="/faq" className="text-white hover:text-accent transition-colors">FAQ</a></li>
-            <li><a href="/contact" className="text-white hover:text-accent transition-colors">Contact</a></li>
-          </ul>
+        {/* Center Section - Quick Links & Support */}
+        <div className="grid grid-cols-2 gap-6">
+          <div>
+            <h3 className="text-lg font-medium mb-3 text-[#8b0000]">Quick Links</h3>
+            <ul className="space-y-2">
+              <li className="flex items-center gap-2">
+                <FaShoppingBag className="text-[#8b0000]" />
+                <a href="/shop" className="hover:text-[#8b0000]">Shop</a>
+              </li>
+              <li className="flex items-center gap-2">
+                <FaEnvelope className="text-[#8b0000]" />
+                <a href="/about" className="hover:text-[#8b0000]">About Us</a>
+              </li>
+              <li className="flex items-center gap-2">
+                <FaPhone className="text-[#8b0000]" />
+                <a href="/contact" className="hover:text-[#8b0000]">Contact</a>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h3 className="text-lg font-medium mb-3 text-[#8b0000]">Customer Support</h3>
+            <ul className="space-y-2">
+              <li><a href="/shipping" className="hover:text-[#8b0000]">Shipping & Returns</a></li>
+              <li><a href="/privacy" className="hover:text-[#8b0000]">Privacy Policy</a></li>
+              <li><a href="/terms" className="hover:text-[#8b0000]">Terms & Conditions</a></li>
+            </ul>
+          </div>
         </div>
 
-        {/* Newsletter Signup */}
+        {/* Right Section - Newsletter Signup */}
         <div>
-          <h4 className="text-xl font-semibold mb-4">Join Our Newsletter</h4>
-          <p className="text-sm mb-4">Get updates on new collections, offers, and jewelry trends directly to your inbox.</p>
+          <h3 className="text-lg font-medium mb-3 text-[#8b0000]">Subscribe to our Newsletter</h3>
+          <p className="text-[#4b0f0f] text-sm mb-4 italic">Get exclusive offers & latest updates.</p>
           <div className="flex">
-            <input
-              type="email"
-              placeholder="Your email address"
-              className="px-4 py-2 rounded-l-lg text-gray-900 focus:outline-none"
+            <input 
+              type="email" 
+              placeholder="Enter your email" 
+              className="px-4 py-2 bg-[#f5d5ae] border border-[#8b0000] text-[#4b0f0f] rounded-l focus:outline-none placeholder-[#8b0000]"
             />
-            <button className="px-6 py-2 bg-primary text-white rounded-r-lg hover:bg-accent transition-all">Subscribe</button>
+            <button className="bg-[#8b0000] px-4 py-2 text-white rounded-r hover:bg-[#4b0f0f] transition">
+              Subscribe
+            </button>
           </div>
-        </div>
-
-        {/* Contact Information */}
-        <div>
-          <h4 className="text-xl font-semibold mb-4">Contact Us</h4>
-          <ul className="space-y-2">
-            <li><a href="mailto:support@jewelmasters.com" className="text-white hover:text-accent transition-colors">support@jewelmasters.com</a></li>
-            <li><a href="tel:+123456789" className="text-white hover:text-accent transition-colors">+1 234 567 890</a></li>
-            <li><a href="/store-locator" className="text-white hover:text-accent transition-colors">Store Locator</a></li>
-          </ul>
         </div>
       </div>
 
-      {/* Footer Bottom */}
-      <div className="border-t border-white pt-6 mt-6 text-center">
-        <p className="text-sm">&copy; 2025 The Jewel Masters Pvt. Ltd. All rights reserved.</p>
+      {/* Bottom Section */}
+      <div className="mt-8 border-t border-[#8b0000] pt-4 text-center text-sm text-[#4b0f0f]">
+        <p>© {new Date().getFullYear()} AS Jewelers. All Rights Reserved.</p>
       </div>
     </footer>
   );
-}
+};
+
+export default Footer;
